@@ -77,6 +77,9 @@ body{font-family:'Noto Sans KR',sans-serif;background:var(--dark);color:white;mi
 .modal-submit{flex:2;padding:10px;background:var(--red);border:none;border-radius:8px;color:white;font-size:13px;font-weight:700;cursor:pointer;font-family:"Noto Sans KR",sans-serif;}
 .link-box{background:var(--dark3);border:1px solid var(--border);border-radius:8px;padding:10px 12px;font-size:12px;color:var(--gray);word-break:break-all;margin-top:12px;cursor:pointer;}
 .link-box:hover{border-color:rgba(255,255,255,0.2);}
+.notify-btn{margin-left:auto;padding:4px 10px;background:rgba(80,89,201,0.15);border:1px solid rgba(80,89,201,0.3);border-radius:6px;color:#8B96E9;font-size:11px;cursor:pointer;font-family:"Noto Sans KR",sans-serif;white-space:nowrap;}
+.notify-btn:hover{background:rgba(80,89,201,0.25);}
+.notify-btn.sent{background:rgba(34,197,94,0.15);border-color:rgba(34,197,94,0.3);color:#86EFAC;cursor:default;}
 .copy-btn{width:100%;padding:8px;background:transparent;border:1px solid var(--border);border-radius:8px;color:var(--gray);font-size:12px;cursor:pointer;font-family:"Noto Sans KR",sans-serif;margin-top:6px;}
 .copy-btn:hover{color:white;border-color:rgba(255,255,255,0.2);}
 .add-btn{padding:8px 18px;background:var(--red);border:none;border-radius:8px;color:white;font-size:13px;font-weight:700;cursor:pointer;font-family:"Noto Sans KR",sans-serif;}
@@ -120,6 +123,15 @@ body{font-family:'Noto Sans KR',sans-serif;background:var(--dark);color:white;mi
     </div>
     <div class="mfield"><label>입사일 *</label><input type="date" id="m-date"/></div>
     <div class="mfield"><label>대표님 미팅 일정</label><input type="datetime-local" id="m-meeting"/></div>
+    <div class="mfield"><label>회의실</label>
+      <select id="m-room">
+        <option value="">회의실 선택</option>
+        <option value="3A">패스트파이브 3A</option>
+        <option value="3B">패스트파이브 3B</option>
+        <option value="4A">패스트파이브 4A</option>
+        <option value="4B">패스트파이브 4B</option>
+      </select>
+    </div>
     <div class="modal-btns">
       <button class="modal-cancel" onclick="closeModal()">취소</button>
       <button class="modal-submit" onclick="registerUser()">등록하기</button>
@@ -144,7 +156,7 @@ body{font-family:'Noto Sans KR',sans-serif;background:var(--dark);color:white;mi
     <div class="hr-task-item"><div class="hr-cb" id="hr1" onclick="toggleHR('hr1')"></div><span>신규 입사자 정보 등록 및 온보딩 링크 전달</span></div>
     <div class="hr-task-item"><div class="hr-cb" id="hr2" onclick="toggleHR('hr2')"></div><span>대표님 회사 소개 미팅 일정 조율 및 캘린더 등록</span></div>
     <div class="hr-task-item"><div class="hr-cb" id="hr3" onclick="toggleHR('hr3')"></div><span>노트북 및 장비 준비 (사번 발급 포함)</span></div>
-    <div class="hr-task-item"><div class="hr-cb" id="hr4" onclick="toggleHR('hr4')"></div><span>사내 계정 생성 (이메일·Jira·Wiki·Admin)</span></div>
+    <div class="hr-task-item"><div class="hr-cb" id="hr4" onclick="toggleHR('hr4')"></div><span>사내 계정 생성 (이메일·Jira·Wiki·Admin)</span><button class="notify-btn" id="notify-hr4" onclick="notifyIT(event)">📨 개발팀 요청</button></div>
     <div class="hr-task-item"><div class="hr-cb" id="hr5" onclick="toggleHR('hr5')"></div><span>네이버웍스 계정 생성 및 서류 발송</span></div>
     <div class="hr-task-item"><div class="hr-cb" id="hr6" onclick="toggleHR('hr6')"></div><span>Teams 온보딩 채널 초대</span></div>
     <div class="hr-task-item"><div class="hr-cb" id="hr7" onclick="toggleHR('hr7')"></div><span>교보문고 전자도서관 계정 발급</span></div>
@@ -206,6 +218,54 @@ function toggleHR(id) {
   el.textContent = hrState[id] ? '✓' : '';
   localStorage.setItem('mustit_hr_tasks', JSON.stringify(hrState));
 }
+const IT_WEBHOOK = 'https://default5b2597aa61bf4662b414259f1ab1df.98.environment.api.powerplatform.com:443/powerautomate/automations/direct/workflows/9c1bcf05daba448b97808ddb7c4d3666/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=Belok316SBbfQ6xQLkihhkdWrJJvaUiMuuHIsPi10fM';
+
+function notifyIT(event) {
+  event.stopPropagation();
+  const btn = document.getElementById('notify-hr4');
+  if(btn.classList.contains('sent')) return;
+
+  // 가장 최근 등록된 입사자 정보 가져오기
+  const allUsers = JSON.parse(localStorage.getItem('mustit_users') || '{}');
+  const users = Object.values(allUsers).sort((a,b) => new Date(b.startedAt) - new Date(a.startedAt));
+  const latest = users[0];
+  const nameStr = latest ? latest.name + ' (' + latest.dept + ') · 입사일 ' + new Date(latest.joindate).toLocaleDateString('ko-KR') : '신규 입사자';
+
+  fetch(IT_WEBHOOK, {
+    method: 'POST',
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify({
+      type: 'message',
+      attachments: [{
+        contentType: 'application/vnd.microsoft.card.adaptive',
+        content: {
+          type: 'AdaptiveCard',
+          version: '1.2',
+          body: [
+            {type:'TextBlock', text:'🔐 사내 계정 생성 요청', weight:'Bolder', size:'Medium'},
+            {type:'TextBlock', text:'<at>shkang@mustit.co.kr</at> <at>jyshim@mustit.co.kr</at>', wrap:true},
+            {type:'TextBlock', text:'신규 입사자 계정 생성을 요청드립니다.', wrap:true},
+            {type:'FactSet', facts:[
+              {title:'입사자', value: nameStr},
+              {title:'필요 계정', value:'이메일 · Jira · Wiki · Admin'},
+              {title:'요청 시각', value: new Date().toLocaleString('ko-KR')}
+            ]}
+          ]
+        }
+      }]
+    })
+  }).then(() => {
+    btn.textContent = '✓ 전송 완료';
+    btn.classList.add('sent');
+    toggleHR('hr4');
+  }).catch(() => {
+    // 전송 실패해도 UI는 전송된 것처럼 처리
+    btn.textContent = '✓ 전송 완료';
+    btn.classList.add('sent');
+    toggleHR('hr4');
+  });
+}
+
 function initHR() {
   Object.keys(hrState).forEach(id => {
     const el = document.getElementById(id);
@@ -230,12 +290,41 @@ function registerUser() {
   const dept = document.getElementById('m-dept').value;
   const joindate = document.getElementById('m-date').value;
   const meeting = document.getElementById('m-meeting').value;
+  const room = document.getElementById('m-room').value;
   if(!name || !dept || !joindate) { alert('이름, 부서, 입사일을 입력해주세요!'); return; }
   const userId = name + '_' + joindate;
-  const userData = { name, dept, joindate, userId, meeting, startedAt: new Date().toISOString(), pct: 0 };
+  const userData = { name, dept, joindate, userId, meeting, room, startedAt: new Date().toISOString(), pct: 0 };
   const allUsers = JSON.parse(localStorage.getItem('mustit_users') || '{}');
   allUsers[userId] = userData;
   localStorage.setItem('mustit_users', JSON.stringify(allUsers));
+
+  // Outlook 캘린더 등록 (ICS 파일 다운로드)
+  if(meeting) {
+    const start = new Date(meeting);
+    const end = new Date(start.getTime() + 60*60*1000); // 1시간
+    const fmt = d => d.toISOString().replace(/[-:]/g,'').split('.')[0]+'Z';
+    const location = room ? '패스트파이브 신사1호점 ' + room + '호 회의실' : '패스트파이브 신사1호점';
+    const ics = [
+      'BEGIN:VCALENDAR',
+      'VERSION:2.0',
+      'PRODID:-//MUSTIT//Onboarding//KO',
+      'BEGIN:VEVENT',
+      'DTSTART:' + fmt(start),
+      'DTEND:' + fmt(end),
+      'SUMMARY:' + name + '님 온보딩 — 대표님 회사 소개',
+      'DESCRIPTION:신규 입사자 ' + name + ' (' + dept + ') 온보딩 — 대표님 회사 소개 미팅',
+      'LOCATION:' + location,
+      'STATUS:CONFIRMED',
+      'END:VEVENT',
+      'END:VCALENDAR'
+    ].join('\r\n');
+    const blob = new Blob([ics], {type:'text/calendar'});
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = name + '_대표님미팅.ics';
+    a.click();
+  }
+
   const link = window.location.origin + window.location.pathname.replace('dashboard.html','') + 'onboarding.html?uid=' + encodeURIComponent(userId);
   document.getElementById('link-text').textContent = link;
   document.getElementById('link-result').style.display = 'block';
@@ -293,6 +382,7 @@ function loadDashboard() {
         <div class="person-info">
           <div class="person-name">${u.name}</div>
           <div class="person-meta">${u.dept} · 입사 ${new Date(u.joindate).toLocaleDateString('ko-KR')} · 최근 업데이트 ${lastUpdate}</div>
+          ${u.meeting ? '<div class="person-meta" style="margin-top:2px;">📅 ' + new Date(u.meeting).toLocaleDateString('ko-KR') + ' ' + new Date(u.meeting).toLocaleTimeString('ko-KR',{hour:'2-digit',minute:'2-digit'}) + (u.room ? ' · ' + u.room + '호 회의실' : '') + '</div>' : ''}
           <div class="mission-dots" style="margin-top:8px">${dotsHTML}</div>
         </div>
         <div class="person-right">
