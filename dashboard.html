@@ -156,7 +156,12 @@ body{font-family:'Noto Sans KR',sans-serif;background:var(--dark);color:white;mi
     <div class="hr-task-item"><div class="hr-cb" id="hr1" onclick="toggleHR('hr1')"></div><span>신규 입사자 정보 등록 및 온보딩 링크 전달</span></div>
     <div class="hr-task-item"><div class="hr-cb" id="hr2" onclick="toggleHR('hr2')"></div><span>대표님 회사 소개 미팅 일정 조율 및 캘린더 등록</span></div>
     <div class="hr-task-item"><div class="hr-cb" id="hr3" onclick="toggleHR('hr3')"></div><span>노트북 및 장비 준비 (사번 발급 포함)</span></div>
-    <div class="hr-task-item"><div class="hr-cb" id="hr4" onclick="toggleHR('hr4')"></div><span>사내 계정 생성 (이메일·Jira·Wiki·Admin)</span><button class="notify-btn" id="notify-hr4" onclick="notifyIT(event)">📨 개발팀 요청</button></div>
+    <div class="hr-task-item" style="flex-wrap:wrap;gap:8px;">
+    <div class="hr-cb" id="hr4" onclick="toggleHR('hr4')"></div>
+    <span>사내 계정 생성</span>
+    <input type="text" id="it-email" placeholder="이메일 계정 (예: wbkim@mustit.co.kr)" style="flex:1;min-width:200px;padding:5px 10px;background:var(--dark3);border:1px solid var(--border);border-radius:6px;color:white;font-size:12px;font-family:'Noto Sans KR',sans-serif;outline:none;"/>
+    <button class="notify-btn" id="notify-hr4" onclick="notifyIT(event)">📨 개발팀 요청</button>
+  </div>
     <div class="hr-task-item"><div class="hr-cb" id="hr5" onclick="toggleHR('hr5')"></div><span>네이버웍스 계정 생성 및 서류 발송</span></div>
     <div class="hr-task-item"><div class="hr-cb" id="hr6" onclick="toggleHR('hr6')"></div><span>Teams 온보딩 채널 초대</span></div>
     <div class="hr-task-item"><div class="hr-cb" id="hr7" onclick="toggleHR('hr7')"></div><span>교보문고 전자도서관 계정 발급</span></div>
@@ -247,7 +252,7 @@ function notifyIT(event) {
             {type:'TextBlock', text:'신규 입사자 계정 생성을 요청드립니다.', wrap:true},
             {type:'FactSet', facts:[
               {title:'입사자', value: nameStr},
-              {title:'필요 계정', value:'이메일 · Jira · Wiki · Admin'},
+              {title:'생성할 계정 이메일', value: document.getElementById('it-email') ? (document.getElementById('it-email').value || '미입력') : '미입력'},
               {title:'요청 시각', value: new Date().toLocaleString('ko-KR')}
             ]}
           ]
