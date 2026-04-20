@@ -180,6 +180,10 @@ h1 span { color: var(--red); }
 </div>
 
 <script>
+// 이전에 입력한 정보 있으면 바로 온보딩 페이지로 이동
+const existing = localStorage.getItem('mustit_current');
+if (existing) { window.location.href = 'onboarding.html'; }
+
 // 오늘 날짜 기본값
 document.getElementById('joindate').value = new Date().toISOString().split('T')[0];
 

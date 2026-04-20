@@ -161,9 +161,19 @@ footer { text-align: center; padding: 24px; font-size: 11px; color: rgba(255,255
   </div>
 </div>
 
-<footer>MUST'IT People Team · Confidential · © 2025</footer>
+<footer>
+  MUST'IT People Team · Confidential · © 2025 · 
+  <a href="#" onclick="resetUser()" style="color:rgba(255,255,255,0.2);text-decoration:none;">다른 사람으로 시작</a>
+</footer>
 
 <script>
+function resetUser() {
+  if(confirm('다른 사람으로 시작하시겠어요? 현재 진행 상태는 저장됩니다.')) {
+    localStorage.removeItem('mustit_current');
+    window.location.href = 'index.html';
+  }
+}
+
 const WEBHOOK_URL = 'https://default5b2597aa61bf4662b414259f1ab1df.98.environment.api.powerplatform.com:443/powerautomate/automations/direct/workflows/9c1bcf05daba448b97808ddb7c4d3666/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=Belok316SBbfQ6xQLkihhkdWrJJvaUiMuuHIsPi10fM';
 
 const MISSIONS = [
