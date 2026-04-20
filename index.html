@@ -146,15 +146,28 @@ h1 span { color: var(--red); }
     <label>부서 *</label>
     <select id="dept">
       <option value="">부서 선택</option>
-      <option>People Team</option>
-      <option>서비스개발팀</option>
-      <option>디자인팀</option>
-      <option>마케팅팀</option>
-      <option>MD팀</option>
-      <option>CS팀</option>
-      <option>재무팀</option>
-      <option>전략기획팀</option>
-      <option>기타</option>
+      <optgroup label="Platform">
+        <option>Back-end</option>
+        <option>Front-end</option>
+        <option>Product Management</option>
+        <option>Customer eXperience</option>
+      </optgroup>
+      <optgroup label="Business · Growth Unit">
+        <option>Growth Planning</option>
+        <option>Growth Marketing</option>
+        <option>Design</option>
+      </optgroup>
+      <optgroup label="Business · Commerce Unit">
+        <option>Online MD</option>
+        <option>AD</option>
+      </optgroup>
+      <optgroup label="Corporate">
+        <option>Finance</option>
+        <option>People</option>
+      </optgroup>
+      <optgroup label="Expansion">
+        <option>Market Expansion</option>
+      </optgroup>
     </select>
   </div>
   <div class="field">
