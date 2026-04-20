@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MUST'IT 온보딩 대시보드</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --red:#E8192C; --dark:#14141F; --dark2:#1E1E2E; --dark3:#252535;
+  --gray:#8888A0; --border:rgba(255,255,255,0.08); --success:#22C55E;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Noto Sans KR',sans-serif;background:var(--dark);color:white;min-height:100vh;}
+.topbar{display:flex;align-items:center;gap:12px;padding:14px 28px;border-bottom:1px solid var(--border);background:rgba(20,20,31,0.95);position:sticky;top:0;z-index:100;backdrop-filter:blur(12px);}
+.logo{background:var(--red);color:white;font-family:'Bebas Neue',sans-serif;font-size:12px;letter-spacing:1px;padding:4px 9px;border-radius:5px;}
+.topbar-title{font-size:14px;font-weight:700;}
+.topbar-sub{font-size:11px;color:var(--gray);}
+.refresh-btn{margin-left:auto;padding:6px 14px;background:transparent;border:1px solid var(--border);border-radius:8px;color:var(--gray);font-size:12px;cursor:pointer;font-family:'Noto Sans KR',sans-serif;}
+.refresh-btn:hover{border-color:rgba(255,255,255,0.2);color:white;}
+
+.wrap{max-width:900px;margin:0 auto;padding:32px 24px;}
+
+.summary{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:28px;}
+.sum-box{background:var(--dark2);border:1px solid var(--border);border-radius:12px;padding:16px;text-align:center;}
+.sum-n{font-size:26px;font-weight:700;}
+.sum-l{font-size:11px;color:var(--gray);margin-top:3px;letter-spacing:0.5px;}
+.sum-box.highlight{border-color:rgba(232,25,44,0.3);}
+.sum-box.highlight .sum-n{color:var(--red);}
+
+.section-title{font-size:13px;font-weight:700;color:var(--gray);letter-spacing:1px;text-transform:uppercase;margin-bottom:12px;}
+
+.people-grid{display:flex;flex-direction:column;gap:10px;margin-bottom:36px;}
+.person-card{background:var(--dark2);border:1px solid var(--border);border-radius:14px;padding:16px 20px;display:flex;align-items:center;gap:16px;transition:border-color .2s;}
+.person-card:hover{border-color:rgba(255,255,255,0.15);}
+.person-card.complete{border-color:rgba(34,197,94,0.25);}
+.avatar{width:40px;height:40px;border-radius:12px;background:var(--dark3);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;}
+.person-info{flex:1;min-width:0;}
+.person-name{font-size:14px;font-weight:700;}
+.person-meta{font-size:11px;color:var(--gray);margin-top:2px;}
+.person-right{display:flex;flex-direction:column;align-items:flex-end;gap:6px;}
+.person-pct{font-size:20px;font-weight:700;}
+.person-pct.done{color:var(--success);}
+.person-pct.mid{color:#FBBF24;}
+.person-pct.low{color:var(--gray);}
+.mini-bar-wrap{width:120px;height:4px;background:rgba(255,255,255,0.08);border-radius:999px;overflow:hidden;}
+.mini-bar{height:4px;border-radius:999px;transition:width .5s;}
+.mini-bar.done-bar{background:var(--success);}
+.mini-bar.mid-bar{background:#FBBF24;}
+.mini-bar.low-bar{background:var(--gray);}
+.mission-dots{display:flex;gap:4px;margin-top:4px;}
+.mdot{width:8px;height:8px;border-radius:50%;background:rgba(255,255,255,0.1);}
+.mdot.sent{background:var(--success);}
+.mdot.partial{background:#FBBF24;}
+.day-badge{font-size:10px;color:var(--red);border:1px solid rgba(232,25,44,0.3);padding:2px 7px;border-radius:999px;}
+
+.empty{text-align:center;padding:60px 20px;color:var(--gray);}
+.empty h3{font-size:16px;margin-bottom:8px;}
+.empty p{font-size:13px;}
+
+.mission-legend{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:20px;}
+.legend-item{display:flex;align-items:center;gap:5px;font-size:11px;color:var(--gray);}
+.legend-dot{width:8px;height:8px;border-radius:50%;}
+
+@media(max-width:600px){
+  .summary{grid-template-columns:repeat(2,1fr);}
+  .person-card{flex-wrap:wrap;}
+  .mini-bar-wrap{width:80px;}
+}
+</style>
+</head>
+<body>
+<div class="topbar">
+  <div class="logo">MUST'IT</div>
+  <div>
+    <div class="topbar-title">온보딩 대시보드</div>
+    <div class="topbar-sub">People Team 전용</div>
+  </div>
+  <button class="refresh-btn" onclick="loadDashboard()">↻ 새로고침</button>
+</div>
+
+<div class="wrap">
+  <div class="summary">
+    <div class="sum-box"><div class="sum-n" id="s-total">0</div><div class="sum-l">전체 인원</div></div>
+    <div class="sum-box highlight"><div class="sum-n" id="s-complete">0</div><div class="sum-l">온보딩 완료</div></div>
+    <div class="sum-box"><div class="sum-n" id="s-inprogress">0</div><div class="sum-l">진행 중</div></div>
+    <div class="sum-box"><div class="sum-n" id="s-avgpct">0%</div><div class="sum-l">평균 진행률</div></div>
+  </div>
+
+  <div class="section-title">미션 현황 범례</div>
+  <div class="mission-legend">
+    <div class="legend-item"><div class="legend-dot" style="background:var(--success)"></div>완료</div>
+    <div class="legend-item"><div class="legend-dot" style="background:#FBBF24"></div>진행 중</div>
+    <div class="legend-item"><div class="legend-dot" style="background:rgba(255,255,255,0.1)"></div>미시작</div>
+  </div>
+
+  <div class="section-title">입사자 현황</div>
+  <div class="people-grid" id="people-grid">
+    <div class="empty">
+      <h3>아직 온보딩을 시작한 인원이 없어요</h3>
+      <p>입사자가 index.html에서 정보를 입력하면 여기에 표시됩니다.</p>
+    </div>
+  </div>
+</div>
+
+<script>
+const MISSIONS = [
+  {id:'m1',num:1,emoji:'🏢',title:'패스트파이브'},
+  {id:'m2',num:2,emoji:'📶',title:'Wi-Fi'},
+  {id:'m3',num:3,emoji:'⏰',title:'네이버웍스'},
+  {id:'m4',num:4,emoji:'💻',title:'Teams/MS365'},
+  {id:'m5',num:5,emoji:'📖',title:'Wiki/복지'},
+  {id:'m6',num:6,emoji:'🔐',title:'Forticlient'},
+  {id:'m7',num:7,emoji:'🚖',title:'카카오T'},
+  {id:'m8',num:8,emoji:'🤖',title:'Claude AI'},
+];
+const MISSION_TASKS = {m1:6,m2:2,m3:8,m4:7,m5:6,m6:3,m7:2,m8:4};
+
+function getDayDiff(joindate) {
+  const j=new Date(joindate), t=new Date();
+  return Math.floor((t-j)/(1000*60*60*24))+1;
+}
+
+function getMissionStatus(progress, missionSent, mid) {
+  if (missionSent && missionSent[mid]) return 'sent';
+  if (!progress) return 'none';
+  const m = MISSIONS.find(x=>x.id===mid);
+  const taskIds = [];
+  for (let i=1; i<=MISSION_TASKS[mid]; i++) taskIds.push(mid.replace('m','t')+'_'+i);
+  const done = taskIds.filter(tid => progress[tid]).length;
+  if (done === 0) return 'none';
+  if (done === MISSION_TASKS[mid]) return 'partial';
+  return 'partial';
+}
+
+function loadDashboard() {
+  const allUsers = JSON.parse(localStorage.getItem('mustit_users') || '{}');
+  const users = Object.values(allUsers);
+  const grid = document.getElementById('people-grid');
+
+  document.getElementById('s-total').textContent = users.length;
+  const completed = users.filter(u=>u.pct===100).length;
+  document.getElementById('s-complete').textContent = completed;
+  document.getElementById('s-inprogress').textContent = users.filter(u=>u.pct>0&&u.pct<100).length;
+  const avg = users.length ? Math.round(users.reduce((a,u)=>a+(u.pct||0),0)/users.length) : 0;
+  document.getElementById('s-avgpct').textContent = avg+'%';
+
+  if (users.length === 0) {
+    grid.innerHTML = '<div class="empty"><h3>아직 온보딩을 시작한 인원이 없어요</h3><p>입사자가 정보를 입력하면 여기에 표시됩니다.</p></div>';
+    return;
+  }
+
+  users.sort((a,b) => (b.pct||0)-(a.pct||0));
+  grid.innerHTML = users.map(u => {
+    const pct = u.pct || 0;
+    const pctClass = pct===100?'done':pct>50?'mid':'low';
+    const barClass = pct===100?'done-bar':pct>50?'mid-bar':'low-bar';
+    const day = getDayDiff(u.joindate);
+    const dotsHTML = MISSIONS.map(m => {
+      const sent = u.missionSent && u.missionSent[m.id];
+      const progress = u.progress || {};
+      const taskIds = [];
+      for(let i=1;i<=MISSION_TASKS[m.id];i++) taskIds.push(m.id.replace('m','t')+'_'+i);
+      const doneCnt = taskIds.filter(tid=>progress[tid]).length;
+      const cls = sent ? 'sent' : doneCnt > 0 ? 'partial' : '';
+      return `<div class="mdot ${cls}" title="${m.emoji} ${m.title}"></div>`;
+    }).join('');
+    const lastUpdate = u.lastUpdated ? new Date(u.lastUpdated).toLocaleDateString('ko-KR') : '-';
+    return `
+      <div class="person-card ${pct===100?'complete':''}">
+        <div class="avatar">${u.name.charAt(0)}</div>
+        <div class="person-info">
+          <div class="person-name">${u.name}</div>
+          <div class="person-meta">${u.dept} · 입사 ${new Date(u.joindate).toLocaleDateString('ko-KR')} · 최근 업데이트 ${lastUpdate}</div>
+          <div class="mission-dots" style="margin-top:8px">${dotsHTML}</div>
+        </div>
+        <div class="person-right">
+          <div class="person-pct ${pctClass}">${pct}%</div>
+          <div class="mini-bar-wrap"><div class="mini-bar ${barClass}" style="width:${pct}%"></div></div>
+          <div class="day-badge">D+${day}</div>
+        </div>
+      </div>`;
+  }).join('');
+}
+
+loadDashboard();
+// 30초마다 자동 새로고침
+setInterval(loadDashboard, 30000);
+</script>
+</body>
+</html>

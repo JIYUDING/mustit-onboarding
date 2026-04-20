@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MUST'IT 온보딩</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --red: #E8192C; --red-dark: #A81020; --red-light: #FDEAEC;
+  --dark: #14141F; --dark2: #1E1E2E; --dark3: #252535;
+  --gray: #8888A0; --border: rgba(255,255,255,0.08);
+  --success: #22C55E;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: 'Noto Sans KR', sans-serif; background: var(--dark); color: white; min-height: 100vh; overflow-x: hidden; }
+
+.topbar {
+  position: sticky; top: 0; z-index: 100;
+  background: rgba(20,20,31,0.95);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--border);
+  padding: 12px 24px;
+  display: flex; align-items: center; gap: 12px;
+}
+.topbar-logo { background: var(--red); color: white; font-family: 'Bebas Neue', sans-serif; font-size: 12px; letter-spacing: 1px; padding: 4px 8px; border-radius: 5px; }
+.topbar-user { font-size: 13px; font-weight: 500; }
+.topbar-dept { font-size: 11px; color: var(--gray); }
+.topbar-day { margin-left: auto; font-size: 12px; color: var(--red); font-weight: 700; border: 1px solid rgba(232,25,44,0.3); padding: 3px 10px; border-radius: 999px; }
+
+.hero { padding: 40px 24px 32px; text-align: center; position: relative; overflow: hidden; }
+.hero::before { content: ''; position: absolute; top: -100px; left: 50%; transform: translateX(-50%); width: 500px; height: 500px; background: radial-gradient(circle, rgba(232,25,44,0.15) 0%, transparent 70%); pointer-events: none; }
+.hero h1 { font-family: 'Bebas Neue', sans-serif; font-size: clamp(44px, 8vw, 72px); letter-spacing: 2px; line-height: 1; }
+.hero h1 span { color: var(--red); }
+.hero-sub { font-size: 14px; color: var(--gray); margin-top: 10px; }
+
+.progress-section { max-width: 720px; margin: 0 auto; padding: 0 24px 32px; }
+.progress-header { display: flex; justify-content: space-between; margin-bottom: 8px; }
+.progress-label { font-size: 12px; color: var(--gray); }
+.progress-pct { font-size: 12px; font-weight: 700; color: var(--red); }
+.progress-track { height: 4px; background: rgba(255,255,255,0.08); border-radius: 999px; overflow: hidden; }
+.progress-fill { height: 4px; background: var(--red); border-radius: 999px; transition: width .5s cubic-bezier(.4,0,.2,1); }
+.stats-row { display: grid; grid-template-columns: repeat(3,1fr); gap: 10px; margin-top: 14px; }
+.stat-box { background: var(--dark2); border: 1px solid var(--border); border-radius: 12px; padding: 12px; text-align: center; }
+.stat-n { font-size: 20px; font-weight: 700; }
+.stat-l { font-size: 10px; color: var(--gray); margin-top: 2px; letter-spacing: 0.5px; }
+
+.missions { max-width: 720px; margin: 0 auto; padding: 0 24px 40px; display: flex; flex-direction: column; gap: 10px; }
+
+.mission-card { background: var(--dark2); border: 1px solid var(--border); border-radius: 16px; overflow: hidden; transition: border-color 0.2s; animation: fadeUp 0.4s ease both; }
+.mission-card.completed { border-color: rgba(34,197,94,0.3); }
+.mission-header { display: flex; align-items: center; gap: 12px; padding: 16px 18px; cursor: pointer; user-select: none; }
+.mission-badge { width: 34px; height: 34px; border-radius: 9px; background: var(--dark3); border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; font-family: 'Bebas Neue', sans-serif; font-size: 15px; color: var(--gray); flex-shrink: 0; transition: all .3s; }
+.mission-badge.active { background: var(--red); color: white; border-color: var(--red); }
+.mission-badge.done { background: var(--success); color: white; border-color: var(--success); }
+.mission-info { flex: 1; min-width: 0; }
+.mission-title { font-size: 13px; font-weight: 700; }
+.mission-sub { font-size: 11px; color: var(--gray); margin-top: 2px; }
+.mission-meta { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
+.mission-prog { font-size: 11px; color: var(--gray); }
+.chevron { width: 18px; height: 18px; border-radius: 50%; background: var(--dark3); display: flex; align-items: center; justify-content: center; font-size: 8px; color: var(--gray); transition: transform .2s; }
+.chevron.open { transform: rotate(180deg); }
+.mission-body { display: none; border-top: 1px solid var(--border); }
+.mission-body.open { display: block; }
+
+.task { display: flex; align-items: flex-start; gap: 10px; padding: 12px 18px; border-bottom: 1px solid var(--border); cursor: pointer; transition: background .15s; }
+.task:last-of-type { border-bottom: none; }
+.task:hover { background: rgba(255,255,255,0.03); }
+.task.done { opacity: 0.5; }
+.task-cb { width: 16px; height: 16px; border-radius: 4px; border: 1.5px solid rgba(255,255,255,0.2); flex-shrink: 0; margin-top: 2px; display: flex; align-items: center; justify-content: center; transition: all .2s; font-size: 9px; font-weight: 900; }
+.task-cb.on { background: var(--red); border-color: var(--red); color: white; }
+.task-content { flex: 1; }
+.task-title { font-size: 13px; font-weight: 500; line-height: 1.4; }
+.task-desc { font-size: 11px; color: var(--gray); margin-top: 3px; line-height: 1.6; }
+.task-link { display: inline-block; font-size: 11px; color: var(--red); margin-top: 4px; text-decoration: none; opacity: 0.85; }
+.task-link:hover { opacity: 1; }
+.task-tag { font-size: 10px; padding: 2px 7px; border-radius: 999px; flex-shrink: 0; margin-top: 2px; font-weight: 500; }
+.tag-req { background: rgba(232,25,44,0.15); color: #FF6B7A; }
+.tag-opt { background: rgba(136,136,160,0.15); color: var(--gray); }
+
+.mission-action { padding: 12px 18px; background: rgba(0,0,0,0.2); }
+.teams-btn { width: 100%; padding: 11px; border-radius: 9px; border: none; font-family: 'Noto Sans KR', sans-serif; font-size: 13px; font-weight: 700; cursor: pointer; transition: all .2s; }
+.teams-btn.locked { background: rgba(255,255,255,0.05); color: var(--gray); cursor: not-allowed; border: 1px solid var(--border); }
+.teams-btn.ready { background: var(--red); color: white; }
+.teams-btn.ready:hover { background: var(--red-dark); }
+.teams-btn.sent { background: rgba(34,197,94,0.15); color: var(--success); border: 1px solid rgba(34,197,94,0.3); cursor: default; }
+
+.complete-banner { display: none; max-width: 720px; margin: 0 auto 24px; padding: 0 24px; }
+.complete-inner { background: linear-gradient(135deg, rgba(34,197,94,0.15), rgba(34,197,94,0.05)); border: 1px solid rgba(34,197,94,0.3); border-radius: 16px; padding: 24px; text-align: center; }
+.complete-inner h2 { font-size: 18px; font-weight: 700; color: var(--success); }
+.complete-inner p { font-size: 13px; color: var(--gray); margin-top: 6px; }
+
+.teams-section { max-width: 720px; margin: 0 auto; padding: 0 24px 80px; }
+.teams-card { background: var(--dark2); border: 1px solid var(--border); border-radius: 16px; overflow: hidden; }
+.teams-top { display: flex; align-items: center; gap: 10px; padding: 14px 18px; border-bottom: 1px solid var(--border); }
+.teams-logo { width: 26px; height: 26px; background: #5059C9; border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 900; color: white; }
+.teams-name { font-size: 13px; font-weight: 700; }
+.teams-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--success); margin-left: auto; }
+.log-list { padding: 10px; display: flex; flex-direction: column; gap: 6px; max-height: 200px; overflow-y: auto; }
+.log-item { background: var(--dark3); border-radius: 8px; padding: 9px 12px; font-size: 11px; color: var(--gray); line-height: 1.5; border-left: 2px solid var(--border); }
+.log-item.new { color: white; border-left-color: var(--red); animation: slideIn .3s ease; }
+.log-item.success { border-left-color: var(--success); color: #86EFAC; }
+.log-time { font-size: 10px; color: var(--gray); margin-top: 2px; opacity: 0.7; }
+
+footer { text-align: center; padding: 24px; font-size: 11px; color: rgba(255,255,255,0.15); border-top: 1px solid var(--border); }
+
+@keyframes fadeUp { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes slideIn { from { opacity: 0; transform: translateX(-6px); } to { opacity: 1; transform: translateX(0); } }
+::-webkit-scrollbar { width: 3px; }
+::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 2px; }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="topbar-logo">MUST'IT</div>
+  <div>
+    <div class="topbar-user" id="tb-name">-</div>
+    <div class="topbar-dept" id="tb-dept">-</div>
+  </div>
+  <div class="topbar-day" id="tb-day">D+1</div>
+</div>
+
+<div class="hero">
+  <h1>WELCOME<br><span>ON BOARD</span></h1>
+  <p class="hero-sub" id="hero-sub">아래 미션을 순서대로 완료해주세요</p>
+</div>
+
+<div class="progress-section">
+  <div class="progress-header">
+    <span class="progress-label" id="prog-label">0개 미션 완료</span>
+    <span class="progress-pct" id="prog-pct">0%</span>
+  </div>
+  <div class="progress-track"><div class="progress-fill" id="prog-fill" style="width:0%"></div></div>
+  <div class="stats-row">
+    <div class="stat-box"><div class="stat-n" id="st-missions">0/8</div><div class="stat-l">MISSIONS</div></div>
+    <div class="stat-box"><div class="stat-n" id="st-tasks">0</div><div class="stat-l">TASKS DONE</div></div>
+    <div class="stat-box"><div class="stat-n" id="st-pct">0%</div><div class="stat-l">COMPLETE</div></div>
+  </div>
+</div>
+
+<div class="complete-banner" id="complete-banner">
+  <div class="complete-inner">
+    <h2>🎉 온보딩 완료!</h2>
+    <p>모든 미션을 완료했습니다. People Team이 확인하고 곧 연락드릴게요!</p>
+  </div>
+</div>
+
+<div class="missions" id="missions-wrap"></div>
+
+<div class="teams-section">
+  <div class="teams-card">
+    <div class="teams-top">
+      <div class="teams-logo">T</div>
+      <div class="teams-name">MS Teams 알림 로그</div>
+      <div class="teams-dot"></div>
+    </div>
+    <div class="log-list" id="log-list">
+      <div class="log-item">미션을 완료하면 People Team 채널로 자동 알림이 전송됩니다.</div>
+    </div>
+  </div>
+</div>
+
+<footer>MUST'IT People Team · Confidential · © 2025</footer>
+
+<script>
+const WEBHOOK_URL = 'https://default5b2597aa61bf4662b414259f1ab1df.98.environment.api.powerplatform.com:443/powerautomate/automations/direct/workflows/9c1bcf05daba448b97808ddb7c4d3666/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=Belok316SBbfQ6xQLkihhkdWrJJvaUiMuuHIsPi10fM';
+
+const MISSIONS = [
+  { id:'m1', num:1, emoji:'🏢', title:'패스트파이브 입주 오피스 안내', sub:'📍 신사1호점 · 공용공간 & 복합기',
+    tasks:[
+      {id:'t1_1', title:'FASTFIVE 앱 설치 및 가입', desc:'App Store / Play Store에서 설치 후 회원가입', req:true},
+      {id:'t1_2', title:'미팅룸 예약 방법 확인', desc:'앱 → 예약 → 미팅룸 / 30분 단위 / 개인 최대 3시간 / 미사용 시 반드시 취소!', req:false},
+      {id:'t1_3', title:'복합기 초기 세팅', desc:'앱 → 내 계정 → 복합기 계정 등록 → print.fastfive.co.kr → 드라이버 설치 → Sindoh Cloud MPS Manager 실행', req:true, link:'https://print.fastfive.co.kr'},
+      {id:'t1_4', title:'복합기 출입카드 태깅 & 출력 테스트', desc:'복합기 리더기에 출입카드 태깅 후 테스트 출력 확인', req:true},
+      {id:'t1_5', title:'공용공간 이용 규칙 숙지', desc:'라운지 취식 11:00~14:00 / 미팅룸 음료만 / 냉장고 최대 30일 / 건물 전체 금연', req:false},
+      {id:'t1_6', title:'주차 안내 확인', desc:'방문 주차 지원 불가 / 외부 손님 주차증 → People Team 박지유', req:false},
+    ]
+  },
+  { id:'m2', num:2, emoji:'📶', title:'Wi-Fi 연결', sub:'💻 사내 내부망 접속',
+    tasks:[
+      {id:'t2_1', title:'MUSTIT_5G 연결', desc:'비밀번호: mustit3512 / 내부망(유선) 연결이 필요한 작업은 랜선 사용', req:true},
+      {id:'t2_2', title:'Wiki / Jira 접속 확인', desc:'Wi-Fi 연결 후 wiki.mustit.xyz 접속 확인', req:true, link:'https://wiki.mustit.xyz'},
+    ]
+  },
+  { id:'m3', num:3, emoji:'⏰', title:'네이버웍스 가입 & 서류 서명', sub:'📋 그룹웨어 · 근태 · 서류 · 결재',
+    tasks:[
+      {id:'t3_1', title:'네이버웍스 앱 설치 및 가입', desc:'mustit.ncpworkplace.com / PC·모바일 모두 설치', req:true, link:'https://mustit.ncpworkplace.com/'},
+      {id:'t3_2', title:'근로계약서 서명', desc:'워크플레이스 수신함에서 확인 후 서명', req:true},
+      {id:'t3_3', title:'연봉계약서 서명', desc:'워크플레이스 수신함에서 확인 후 서명', req:true},
+      {id:'t3_4', title:'보안서약서 서명', desc:'워크플레이스 수신함에서 확인 후 서명', req:true},
+      {id:'t3_5', title:'개인정보 이용동의서 서명', desc:'워크플레이스 수신함에서 확인 후 서명', req:true},
+      {id:'t3_6', title:'출퇴근 방법 숙지', desc:'매일 출근 시 앱/PC에서 출근 버튼 클릭 / 외출 1시간 단위 / 당일 출근 전 외출 신청 불가', req:true},
+      {id:'t3_7', title:'결재 올리는 방법 학습 (명함 결재 연습)', desc:'결재 메뉴 → 명함 신청 결재 올려보기', req:true},
+      {id:'t3_8', title:'연차 사용 방법 숙지', desc:'반차(4시간) / 연차(8시간) 신청 방법 확인', req:false},
+    ]
+  },
+  { id:'m4', num:4, emoji:'💻', title:'Teams 가입 & Intune 조인 & MS365 설치', sub:'🔧 사내 메신저 · 장비 등록 · Office 설치',
+    tasks:[
+      {id:'t4_1', title:'사내 계정 비밀번호 변경', desc:'반드시 내부망(유선) 연결 후 / 계정: corp\\이니셜+성 / 초기 PW: Passw@rd!1', req:true, link:'https://corp-login.mustit.co.kr/ADFS/portal/updatepassword/'},
+      {id:'t4_2', title:'Intune 조인 (AD 등록)', desc:'Mac: wiki.mustit.xyz/x/CHYZAw / Windows: wiki.mustit.xyz/x/ghOdAw', req:true, link:'https://wiki.mustit.xyz/x/CHYZAw'},
+      {id:'t4_3', title:'MS Teams 설치 (PC + 모바일 모두!)', desc:'사내 모든 소통은 Teams로 진행됩니다. PC·스마트폰 모두 설치', req:true},
+      {id:'t4_4', title:'Teams 프로필 사진 & 상태 메시지 등록', desc:'Tribe > Chapter > 직무 / 09:10~18:10 / 12:30~13:30 형식으로 상태 메시지 작성', req:true},
+      {id:'t4_5', title:'MS Office 설치', desc:'Windows: Intune 등록 시 자동 / Mac: support.microsoft.com/ko-kr 수동 설치', req:true},
+      {id:'t4_6', title:'MS365 MFA 등록', desc:'가이드: wiki.mustit.xyz/x/khBnAw', req:true, link:'https://wiki.mustit.xyz/x/khBnAw'},
+      {id:'t4_7', title:'Outlook 메일 & 캘린더 설정', desc:'회사 계정 로그인 후 메일 수신 확인 / Outlook Calendar로 전사 일정 관리', req:true},
+    ]
+  },
+  { id:'m5', num:5, emoji:'📖', title:'Wiki 프로필 & 복지 안내 & Admin 로그인', sub:'🌟 사내 아카이빙 · 복지 확인',
+    tasks:[
+      {id:'t5_1', title:'Wiki 프로필 사진 등록', desc:'wiki.mustit.xyz → 우측 상단 프로필 → Edit profile → 사진 등록', req:true, link:'https://wiki.mustit.xyz'},
+      {id:'t5_2', title:'Wiki About me Q&A 작성', desc:'내향/외향, 피드백 선호 방식, 관심사 등 기재 (소통 방식만, 역량/경력 제외)', req:true},
+      {id:'t5_3', title:'복지 제도 전체 확인', desc:'데일리플렉스 / 교육비 / 건강검진 / 임직원 할인 / Refresh 휴가 / 근속 포상 / 생일 적립금 / 경조사 / 석식 / 소통지원비 / 재택근무 등', req:true},
+      {id:'t5_4', title:'교보문고 전자도서관 계정 등록', desc:'People Team 안내에 따라 계정 등록', req:true},
+      {id:'t5_5', title:'서비스 Admin 최초 로그인', desc:'admin.mustit.xyz → 사내계정 로그인 → 최초 인증번호: 12345 / 업무 미사용자도 1회 필수!', req:true, link:'https://admin.mustit.xyz'},
+      {id:'t5_6', title:'Jira 기본 사용법 확인', desc:'jira.mustit.xyz (내부망) / 이슈 만들기 후 반드시 "상신하기/신청하기" 버튼까지 클릭!', req:true, link:'https://jira.mustit.xyz/'},
+    ]
+  },
+  { id:'m6', num:6, emoji:'🔐', title:'Forticlient 설치 & VPN 승인', sub:'🛡 ISMS 인증 · 외부 접속 보안',
+    tasks:[
+      {id:'t6_1', title:'Forticlient 설치 및 임직원 인증', desc:'가이드: wiki.mustit.xyz/x/7M3kAQ', req:true, link:'https://wiki.mustit.xyz/x/7M3kAQ'},
+      {id:'t6_2', title:'VPN 사용 신청 (Jira → ISMS)', desc:'이슈 생성 후 반드시 "승인 요청" 클릭! "열림" 상태는 신청 완료가 아닙니다', req:true, link:'https://wiki.mustit.xyz/x/G1cdAQ'},
+      {id:'t6_3', title:'VPN 연결 테스트', desc:'외부망에서 VPN 켜고 wiki.mustit.xyz 접속 확인', req:true},
+    ]
+  },
+  { id:'m7', num:7, emoji:'🚖', title:'카카오 T 법인 인증', sub:'🚗 업무 이동 지원',
+    tasks:[
+      {id:'t7_1', title:'카카오 T 앱 설치', desc:'App Store / Play Store에서 카카오 T 설치', req:true},
+      {id:'t7_2', title:'법인 계정 인증 완료', desc:'People Team 안내에 따라 법인 인증 진행', req:true},
+    ]
+  },
+  { id:'m8', num:8, emoji:'🤖', title:'Claude AI 교육', sub:'✨ AI 업무 활용',
+    tasks:[
+      {id:'t8_1', title:'Claude 계정 생성', desc:'claude.ai 접속 후 회사 이메일로 계정 생성', req:true, link:'https://claude.ai'},
+      {id:'t8_2', title:'Claude 기본 사용법 익히기', desc:'프롬프트 작성법, 파일 업로드, 대화 이어가기 등 기본 기능 체험', req:true},
+      {id:'t8_3', title:'업무 활용 예시 따라하기', desc:'문서 요약 / 이메일 초안 / 데이터 분석 / 브레인스토밍 중 1개 이상 직접 해보기', req:true},
+      {id:'t8_4', title:'머스트잇 AI 활용 가이드 확인', desc:'Wiki → AI 활용 가이드에서 사내 AI 사용 정책 및 주의사항 확인', req:true, link:'https://wiki.mustit.xyz'},
+    ]
+  }
+];
+
+// 유저 정보 로드
+const currentUser = JSON.parse(localStorage.getItem('mustit_current') || 'null');
+if (!currentUser) { window.location.href = 'index.html'; }
+
+const { name, dept, joindate, userId } = currentUser;
+
+// D+N 계산
+const joinDt = new Date(joindate);
+const today = new Date();
+const diffDays = Math.floor((today - joinDt) / (1000*60*60*24)) + 1;
+
+document.getElementById('tb-name').textContent = name + '님';
+document.getElementById('tb-dept').textContent = dept;
+document.getElementById('tb-day').textContent = 'D+' + diffDays;
+document.getElementById('hero-sub').textContent = name + '님, 함께해서 반가워요! 아래 미션을 순서대로 완료해주세요.';
+
+// 저장된 체크 상태 로드
+const storageKey = 'mustit_progress_' + userId;
+const savedProgress = JSON.parse(localStorage.getItem(storageKey) || '{}');
+const taskState = {};
+const missionSent = JSON.parse(localStorage.getItem(storageKey + '_sent') || '{}');
+MISSIONS.forEach(m => m.tasks.forEach(t => { taskState[t.id] = savedProgress[t.id] || false; }));
+
+function saveProgress() {
+  localStorage.setItem(storageKey, JSON.stringify(taskState));
+  localStorage.setItem(storageKey + '_sent', JSON.stringify(missionSent));
+  // 전체 사용자 진행도 업데이트
+  const allUsers = JSON.parse(localStorage.getItem('mustit_users') || '{}');
+  if (allUsers[userId]) {
+    allUsers[userId].progress = taskState;
+    allUsers[userId].missionSent = missionSent;
+    allUsers[userId].lastUpdated = new Date().toISOString();
+    allUsers[userId].pct = Math.round(Object.values(taskState).filter(Boolean).length / MISSIONS.reduce((a,m)=>a+m.tasks.length,0)*100);
+    localStorage.setItem('mustit_users', JSON.stringify(allUsers));
+  }
+}
+
+function totalTasks() { return MISSIONS.reduce((a,m) => a+m.tasks.length, 0); }
+function doneTasks() { return Object.values(taskState).filter(Boolean).length; }
+function doneMissions() { return MISSIONS.filter(m => m.tasks.every(t => taskState[t.id])).length; }
+function getMissionDone(mid) { return MISSIONS.find(x=>x.id===mid).tasks.every(t=>taskState[t.id]); }
+function getMissionProgress(mid) { const m=MISSIONS.find(x=>x.id===mid); return m.tasks.filter(t=>taskState[t.id]).length+'/'+m.tasks.length; }
+
+function updateProgress() {
+  const tt=totalTasks(), dt=doneTasks(), dm=doneMissions();
+  const pct=Math.round(dt/tt*100);
+  document.getElementById('prog-fill').style.width=pct+'%';
+  document.getElementById('prog-pct').textContent=pct+'%';
+  document.getElementById('prog-label').textContent=dm+'개 미션 완료';
+  document.getElementById('st-missions').textContent=dm+'/8';
+  document.getElementById('st-tasks').textContent=dt;
+  document.getElementById('st-pct').textContent=pct+'%';
+  if(dm===8) document.getElementById('complete-banner').style.display='block';
+}
+
+function updateCard(mid) {
+  const m=MISSIONS.find(x=>x.id===mid);
+  const allDone=getMissionDone(mid);
+  const badge=document.getElementById('badge-'+mid);
+  const prog=document.getElementById('prog-'+mid);
+  const btn=document.getElementById('btn-'+mid);
+  const card=document.getElementById('card-'+mid);
+  prog.textContent=getMissionProgress(mid);
+  if(missionSent[mid]){
+    badge.className='mission-badge done'; badge.textContent='✓';
+    card.classList.add('completed');
+    btn.className='teams-btn sent'; btn.textContent='✓ Teams 알림 전송 완료';
+  } else if(allDone){
+    badge.className='mission-badge active'; badge.textContent=m.num;
+    btn.className='teams-btn ready'; btn.textContent='📨 Teams로 완료 알림 전송하기';
+  } else {
+    badge.className='mission-badge'; badge.textContent=m.num;
+    btn.className='teams-btn locked'; btn.textContent='모든 항목 체크 후 완료 가능';
+  }
+}
+
+function toggleTask(tid, mid) {
+  taskState[tid]=!taskState[tid];
+  const cb=document.getElementById('cb-'+tid);
+  const item=document.getElementById('task-'+tid);
+  if(taskState[tid]){ cb.classList.add('on'); cb.textContent='✓'; item.classList.add('done'); }
+  else { cb.classList.remove('on'); cb.textContent=''; item.classList.remove('done'); }
+  updateCard(mid); updateProgress(); saveProgress();
+}
+
+function toggleMission(mid) {
+  const body=document.getElementById('body-'+mid);
+  const chev=document.getElementById('chev-'+mid);
+  const isOpen=body.classList.contains('open');
+  document.querySelectorAll('.mission-body').forEach(b=>b.classList.remove('open'));
+  document.querySelectorAll('.chevron').forEach(c=>c.classList.remove('open'));
+  if(!isOpen){ body.classList.add('open'); chev.classList.add('open'); }
+}
+
+function sendTeams(mid) {
+  if(missionSent[mid]||!getMissionDone(mid)) return;
+  missionSent[mid]=true;
+  updateCard(mid); updateProgress(); saveProgress();
+  const m=MISSIONS.find(x=>x.id===mid);
+  const now=new Date();
+  const t=now.getHours().toString().padStart(2,'0')+':'+now.getMinutes().toString().padStart(2,'0');
+  const allDone=doneMissions()===8;
+  const list=document.getElementById('log-list');
+  const div=document.createElement('div');
+  div.className='log-item '+(allDone?'success':'new');
+  div.innerHTML=(allDone?'🎉 <strong>'+name+'님 전체 온보딩 완료!</strong>':'📋 <strong>'+name+'님 Mission '+m.num+' 완료</strong> — '+m.title)+'<div class="log-time">'+t+'</div>';
+  list.insertBefore(div, list.firstChild);
+  fetch(WEBHOOK_URL, {
+    method:'POST',
+    headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({
+      type:'message',
+      attachments:[{
+        contentType:'application/vnd.microsoft.card.adaptive',
+        content:{
+          type:'AdaptiveCard', version:'1.2',
+          body:[
+            {type:'TextBlock', text:(allDone?'🎉 전체 온보딩 완료!':'📋 Mission '+m.num+' 완료'), weight:'Bolder', size:'Medium'},
+            {type:'TextBlock', text:'👤 '+name+' ('+dept+')', wrap:true},
+            {type:'TextBlock', text:'📌 '+m.title, wrap:true},
+            {type:'TextBlock', text:'🕐 '+now.toLocaleString('ko-KR'), isSubtle:true, size:'Small'}
+          ]
+        }
+      }]
+    })
+  }).catch(()=>{});
+}
+
+function render() {
+  const wrap=document.getElementById('missions-wrap');
+  MISSIONS.forEach((m,i)=>{
+    const card=document.createElement('div');
+    card.className='mission-card'; card.id='card-'+m.id;
+    card.style.animationDelay=(i*0.05)+'s';
+    const tasksHTML=m.tasks.map(t=>`
+      <div class="task${taskState[t.id]?' done':''}" id="task-${t.id}" onclick="toggleTask('${t.id}','${m.id}')">
+        <div class="task-cb${taskState[t.id]?' on':''}" id="cb-${t.id}">${taskState[t.id]?'✓':''}</div>
+        <div class="task-content">
+          <div class="task-title">${t.title}</div>
+          <div class="task-desc">${t.desc}</div>
+          ${t.link?`<a class="task-link" href="${t.link}" target="_blank" onclick="event.stopPropagation()">↗ ${t.link.replace('https://','').split('/')[0]}</a>`:''}
+        </div>
+        <span class="task-tag ${t.req?'tag-req':'tag-opt'}">${t.req?'필수':'참고'}</span>
+      </div>`).join('');
+    card.innerHTML=`
+      <div class="mission-header" onclick="toggleMission('${m.id}')">
+        <div class="mission-badge" id="badge-${m.id}">${m.num}</div>
+        <div class="mission-info">
+          <div class="mission-title">${m.emoji} ${m.title}</div>
+          <div class="mission-sub">${m.sub}</div>
+        </div>
+        <div class="mission-meta">
+          <span class="mission-prog" id="prog-${m.id}">${getMissionProgress(m.id)}</span>
+          <div class="chevron" id="chev-${m.id}">▼</div>
+        </div>
+      </div>
+      <div class="mission-body" id="body-${m.id}">
+        ${tasksHTML}
+        <div class="mission-action">
+          <button class="teams-btn locked" id="btn-${m.id}" onclick="sendTeams('${m.id}')">모든 항목 체크 후 완료 가능</button>
+        </div>
+      </div>`;
+    wrap.appendChild(card);
+    updateCard(m.id);
+  });
+  document.getElementById('body-m1').classList.add('open');
+  document.getElementById('chev-m1').classList.add('open');
+  updateProgress();
+}
+render();
+</script>
+</body>
+</html>

@@ -9,675 +9,187 @@
 :root {
   --red: #E8192C;
   --red-dark: #A81020;
-  --red-light: #FDEAEC;
   --dark: #14141F;
   --dark2: #1E1E2E;
   --dark3: #252535;
   --gray: #8888A0;
-  --gray-light: #F4F4F8;
-  --white: #FFFFFF;
   --border: rgba(255,255,255,0.08);
-  --success: #22C55E;
-  --success-light: #DCFCE7;
 }
-
 * { box-sizing: border-box; margin: 0; padding: 0; }
-
 body {
   font-family: 'Noto Sans KR', sans-serif;
   background: var(--dark);
-  color: var(--white);
+  color: white;
   min-height: 100vh;
-  overflow-x: hidden;
-}
-
-/* ── HERO ── */
-.hero {
-  position: relative;
-  padding: 80px 24px 60px;
-  text-align: center;
-  overflow: hidden;
-}
-.hero::before {
-  content: '';
-  position: absolute;
-  top: -120px; left: 50%; transform: translateX(-50%);
-  width: 600px; height: 600px;
-  background: radial-gradient(circle, rgba(232,25,44,0.18) 0%, transparent 70%);
-  pointer-events: none;
-}
-.hero-tag {
-  display: inline-block;
-  font-size: 11px;
-  letter-spacing: 2px;
-  text-transform: uppercase;
-  color: var(--red);
-  border: 1px solid rgba(232,25,44,0.4);
-  padding: 5px 14px;
-  border-radius: 999px;
-  margin-bottom: 20px;
-  animation: fadeUp 0.6s ease both;
-}
-.hero h1 {
-  font-family: 'Bebas Neue', sans-serif;
-  font-size: clamp(52px, 10vw, 88px);
-  letter-spacing: 2px;
-  line-height: 1;
-  animation: fadeUp 0.6s 0.1s ease both;
-}
-.hero h1 span { color: var(--red); }
-.hero-sub {
-  margin-top: 16px;
-  font-size: 15px;
-  color: var(--gray);
-  font-weight: 300;
-  animation: fadeUp 0.6s 0.2s ease both;
-}
-
-/* ── PROGRESS ── */
-.progress-section {
-  max-width: 720px;
-  margin: 0 auto;
-  padding: 0 24px 40px;
-  animation: fadeUp 0.6s 0.3s ease both;
-}
-.progress-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 10px;
-}
-.progress-label { font-size: 13px; color: var(--gray); }
-.progress-pct { font-size: 13px; font-weight: 700; color: var(--red); }
-.progress-track {
-  height: 4px;
-  background: rgba(255,255,255,0.1);
-  border-radius: 999px;
-  overflow: hidden;
-}
-.progress-fill {
-  height: 4px;
-  background: var(--red);
-  border-radius: 999px;
-  transition: width 0.5s cubic-bezier(.4,0,.2,1);
-  width: 0%;
-}
-.stats-row {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 10px;
-  margin-top: 16px;
-}
-.stat-box {
-  background: var(--dark2);
-  border: 1px solid var(--border);
-  border-radius: 12px;
-  padding: 14px;
-  text-align: center;
-}
-.stat-n { font-size: 22px; font-weight: 700; color: var(--white); }
-.stat-l { font-size: 11px; color: var(--gray); margin-top: 2px; letter-spacing: 0.5px; }
-
-/* ── MISSIONS ── */
-.missions {
-  max-width: 720px;
-  margin: 0 auto;
-  padding: 0 24px 40px;
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 24px;
+  overflow: hidden;
 }
-
-.mission-card {
+.bg-glow {
+  position: fixed;
+  top: -200px; left: 50%; transform: translateX(-50%);
+  width: 700px; height: 700px;
+  background: radial-gradient(circle, rgba(232,25,44,0.15) 0%, transparent 65%);
+  pointer-events: none;
+}
+.card {
+  width: 100%;
+  max-width: 440px;
   background: var(--dark2);
   border: 1px solid var(--border);
-  border-radius: 16px;
-  overflow: hidden;
-  transition: border-color 0.2s;
-  animation: fadeUp 0.5s ease both;
+  border-radius: 24px;
+  padding: 40px 36px;
+  animation: fadeUp 0.6s ease both;
 }
-.mission-card.completed { border-color: rgba(34,197,94,0.3); }
-.mission-card:hover { border-color: rgba(255,255,255,0.15); }
-
-.mission-header {
+.logo-row {
   display: flex;
   align-items: center;
-  gap: 14px;
-  padding: 18px 20px;
-  cursor: pointer;
-  user-select: none;
+  gap: 10px;
+  margin-bottom: 28px;
 }
-.mission-badge {
-  width: 36px; height: 36px;
-  border-radius: 10px;
+.logo {
+  background: var(--red);
+  color: white;
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 13px;
+  letter-spacing: 1px;
+  padding: 5px 10px;
+  border-radius: 6px;
+}
+.logo-sub { font-size: 13px; color: var(--gray); }
+h1 {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 40px;
+  letter-spacing: 1px;
+  line-height: 1.1;
+  margin-bottom: 6px;
+}
+h1 span { color: var(--red); }
+.sub {
+  font-size: 13px;
+  color: var(--gray);
+  margin-bottom: 32px;
+  line-height: 1.6;
+}
+.field { margin-bottom: 16px; }
+.field label {
+  display: block;
+  font-size: 12px;
+  color: var(--gray);
+  margin-bottom: 6px;
+  letter-spacing: 0.3px;
+}
+.field input, .field select {
+  width: 100%;
+  padding: 12px 14px;
   background: var(--dark3);
   border: 1px solid var(--border);
-  display: flex; align-items: center; justify-content: center;
-  font-family: 'Bebas Neue', sans-serif;
-  font-size: 16px;
-  color: var(--gray);
-  flex-shrink: 0;
-  transition: all 0.3s;
-}
-.mission-badge.active { background: var(--red); color: white; border-color: var(--red); }
-.mission-badge.done { background: var(--success); color: white; border-color: var(--success); }
-.mission-info { flex: 1; min-width: 0; }
-.mission-title { font-size: 14px; font-weight: 700; color: var(--white); }
-.mission-sub { font-size: 12px; color: var(--gray); margin-top: 3px; }
-.mission-meta { display: flex; align-items: center; gap: 10px; flex-shrink: 0; }
-.mission-prog { font-size: 12px; color: var(--gray); }
-.chevron {
-  width: 20px; height: 20px;
-  border-radius: 50%;
-  background: var(--dark3);
-  display: flex; align-items: center; justify-content: center;
-  font-size: 9px; color: var(--gray);
-  transition: transform 0.25s;
-}
-.chevron.open { transform: rotate(180deg); }
-
-.mission-body {
-  display: none;
-  border-top: 1px solid var(--border);
-}
-.mission-body.open { display: block; }
-
-.task {
-  display: flex;
-  align-items: flex-start;
-  gap: 12px;
-  padding: 14px 20px;
-  border-bottom: 1px solid var(--border);
-  cursor: pointer;
-  transition: background 0.15s;
-}
-.task:last-of-type { border-bottom: none; }
-.task:hover { background: rgba(255,255,255,0.03); }
-.task.done { opacity: 0.5; }
-
-.task-cb {
-  width: 18px; height: 18px;
-  border-radius: 5px;
-  border: 1.5px solid rgba(255,255,255,0.2);
-  flex-shrink: 0;
-  margin-top: 2px;
-  display: flex; align-items: center; justify-content: center;
-  transition: all 0.2s;
-  font-size: 10px; font-weight: 900;
-}
-.task-cb.on { background: var(--red); border-color: var(--red); color: white; }
-.task-content { flex: 1; }
-.task-title { font-size: 13px; font-weight: 500; color: var(--white); line-height: 1.5; }
-.task-desc { font-size: 12px; color: var(--gray); margin-top: 4px; line-height: 1.6; }
-.task-link {
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-  font-size: 11px;
-  color: var(--red);
-  margin-top: 5px;
-  text-decoration: none;
-  opacity: 0.85;
-}
-.task-link:hover { opacity: 1; }
-.task-tag {
-  font-size: 10px;
-  padding: 2px 8px;
-  border-radius: 999px;
-  flex-shrink: 0;
-  margin-top: 3px;
-  font-weight: 500;
-}
-.tag-req { background: rgba(232,25,44,0.15); color: #FF6B7A; }
-.tag-opt { background: rgba(136,136,160,0.15); color: var(--gray); }
-.tag-tip { background: rgba(99,179,237,0.15); color: #7DBEF5; }
-
-.mission-action {
-  padding: 14px 20px;
-  background: rgba(0,0,0,0.2);
-}
-.teams-btn {
-  width: 100%;
-  padding: 12px;
   border-radius: 10px;
-  border: none;
+  color: white;
+  font-size: 14px;
   font-family: 'Noto Sans KR', sans-serif;
-  font-size: 13px;
+  outline: none;
+  transition: border-color 0.2s;
+}
+.field input:focus, .field select:focus { border-color: rgba(232,25,44,0.5); }
+.field select option { background: var(--dark2); }
+.start-btn {
+  width: 100%;
+  padding: 14px;
+  background: var(--red);
+  color: white;
+  border: none;
+  border-radius: 12px;
+  font-family: 'Noto Sans KR', sans-serif;
+  font-size: 15px;
   font-weight: 700;
   cursor: pointer;
+  margin-top: 8px;
   transition: all 0.2s;
   letter-spacing: 0.3px;
 }
-.teams-btn.locked {
-  background: rgba(255,255,255,0.05);
-  color: var(--gray);
-  cursor: not-allowed;
-  border: 1px solid var(--border);
-}
-.teams-btn.ready {
-  background: var(--red);
-  color: white;
-}
-.teams-btn.ready:hover { background: var(--red-dark); transform: translateY(-1px); }
-.teams-btn.sent {
-  background: rgba(34,197,94,0.15);
-  color: var(--success);
-  border: 1px solid rgba(34,197,94,0.3);
-  cursor: default;
-}
-
-/* ── TEAMS LOG ── */
-.teams-section {
-  max-width: 720px;
-  margin: 0 auto;
-  padding: 0 24px 80px;
-}
-.teams-card {
-  background: var(--dark2);
-  border: 1px solid var(--border);
-  border-radius: 16px;
-  overflow: hidden;
-}
-.teams-top {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  padding: 16px 20px;
-  border-bottom: 1px solid var(--border);
-}
-.teams-logo {
-  width: 28px; height: 28px;
-  background: #5059C9;
-  border-radius: 7px;
-  display: flex; align-items: center; justify-content: center;
-  font-size: 13px; font-weight: 900; color: white;
-}
-.teams-name { font-size: 14px; font-weight: 700; }
-.teams-dot {
-  width: 6px; height: 6px;
-  border-radius: 50%;
-  background: var(--success);
-  margin-left: auto;
-}
-.teams-dot-label { font-size: 11px; color: var(--gray); }
-.log-list {
-  padding: 12px;
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  max-height: 220px;
-  overflow-y: auto;
-}
-.log-item {
-  background: var(--dark3);
-  border-radius: 10px;
-  padding: 10px 14px;
+.start-btn:hover { background: var(--red-dark); transform: translateY(-1px); }
+.dashboard-link {
+  display: block;
+  text-align: center;
+  margin-top: 20px;
   font-size: 12px;
   color: var(--gray);
-  line-height: 1.6;
-  border-left: 2px solid var(--border);
+  text-decoration: none;
+  transition: color 0.2s;
 }
-.log-item.new {
-  color: var(--white);
-  border-left-color: var(--red);
-  animation: slideIn 0.3s ease;
-}
-.log-item.success {
-  border-left-color: var(--success);
-  color: #86EFAC;
-}
-.log-time { font-size: 10px; color: var(--gray); margin-top: 3px; opacity: 0.7; }
-
-/* ── COMPLETE BANNER ── */
-.complete-banner {
-  display: none;
-  max-width: 720px;
-  margin: 0 auto 32px;
-  padding: 0 24px;
-}
-.complete-inner {
-  background: linear-gradient(135deg, rgba(34,197,94,0.15), rgba(34,197,94,0.05));
-  border: 1px solid rgba(34,197,94,0.3);
-  border-radius: 16px;
-  padding: 24px;
-  text-align: center;
-}
-.complete-inner h2 { font-size: 20px; font-weight: 700; color: var(--success); }
-.complete-inner p { font-size: 13px; color: var(--gray); margin-top: 6px; }
-
-/* ── FOOTER ── */
-footer {
-  text-align: center;
-  padding: 32px 24px;
-  font-size: 12px;
-  color: rgba(255,255,255,0.2);
-  border-top: 1px solid var(--border);
-  letter-spacing: 0.5px;
-}
-
-/* ── ANIMATIONS ── */
+.dashboard-link:hover { color: white; }
 @keyframes fadeUp {
-  from { opacity: 0; transform: translateY(16px); }
+  from { opacity: 0; transform: translateY(20px); }
   to { opacity: 1; transform: translateY(0); }
-}
-@keyframes slideIn {
-  from { opacity: 0; transform: translateX(-8px); }
-  to { opacity: 1; transform: translateX(0); }
-}
-
-/* ── SCROLLBAR ── */
-::-webkit-scrollbar { width: 4px; }
-::-webkit-scrollbar-track { background: transparent; }
-::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 2px; }
-
-/* ── MOBILE ── */
-@media (max-width: 480px) {
-  .hero h1 { font-size: 52px; }
-  .stats-row { grid-template-columns: repeat(3,1fr); }
-  .mission-title { font-size: 13px; }
 }
 </style>
 </head>
 <body>
-
-<div class="hero">
-  <div class="hero-tag">People Team · Newcomer Guide</div>
+<div class="bg-glow"></div>
+<div class="card">
+  <div class="logo-row">
+    <div class="logo">MUST'IT</div>
+    <div class="logo-sub">People Team</div>
+  </div>
   <h1>WELCOME<br><span>ON BOARD</span></h1>
-  <p class="hero-sub">개인의 성장이 곧 회사의 성장입니다. 아래 미션을 순서대로 완료해주세요.</p>
+  <p class="sub">개인의 성장이 곧 회사의 성장입니다.<br>정보를 입력하고 온보딩을 시작하세요.</p>
+
+  <div class="field">
+    <label>이름 *</label>
+    <input type="text" id="name" placeholder="홍길동" />
+  </div>
+  <div class="field">
+    <label>부서 *</label>
+    <select id="dept">
+      <option value="">부서 선택</option>
+      <option>People Team</option>
+      <option>서비스개발팀</option>
+      <option>디자인팀</option>
+      <option>마케팅팀</option>
+      <option>MD팀</option>
+      <option>CS팀</option>
+      <option>재무팀</option>
+      <option>전략기획팀</option>
+      <option>기타</option>
+    </select>
+  </div>
+  <div class="field">
+    <label>입사일 *</label>
+    <input type="date" id="joindate" />
+  </div>
+
+  <button class="start-btn" onclick="startOnboarding()">온보딩 시작하기 →</button>
+  <a href="dashboard.html" class="dashboard-link">인사담당자 대시보드 →</a>
 </div>
-
-<div class="progress-section">
-  <div class="progress-header">
-    <span class="progress-label" id="prog-label">0개 미션 완료</span>
-    <span class="progress-pct" id="prog-pct">0%</span>
-  </div>
-  <div class="progress-track">
-    <div class="progress-fill" id="prog-fill"></div>
-  </div>
-  <div class="stats-row">
-    <div class="stat-box"><div class="stat-n" id="st-missions">0/8</div><div class="stat-l">MISSIONS</div></div>
-    <div class="stat-box"><div class="stat-n" id="st-tasks">0</div><div class="stat-l">TASKS DONE</div></div>
-    <div class="stat-box"><div class="stat-n" id="st-pct">0%</div><div class="stat-l">COMPLETE</div></div>
-  </div>
-</div>
-
-<div class="complete-banner" id="complete-banner">
-  <div class="complete-inner">
-    <h2>🎉 온보딩 완료!</h2>
-    <p>모든 미션을 완료했습니다. People Team이 확인하고 곧 연락드릴 거예요!</p>
-  </div>
-</div>
-
-<div class="missions" id="missions-wrap"></div>
-
-<div class="teams-section">
-  <div class="teams-card">
-    <div class="teams-top">
-      <div class="teams-logo">T</div>
-      <div class="teams-name">MS Teams 알림 로그</div>
-      <div class="teams-dot"></div>
-      <div class="teams-dot-label">연결됨</div>
-    </div>
-    <div class="log-list" id="log-list">
-      <div class="log-item">미션을 완료하면 People Team 채널로 자동 알림이 전송됩니다.</div>
-    </div>
-  </div>
-</div>
-
-<footer>MUST'IT People Team · Confidential · © 2025</footer>
 
 <script>
-const MISSIONS = [
-  {
-    id: 'm1', num: 1, emoji: '🏢',
-    title: '패스트파이브 입주 오피스 안내',
-    sub: '📍 신사1호점 · 공용공간 & 복합기',
-    tasks: [
-      { id: 't1_1', title: 'FASTFIVE 앱 설치 및 가입', desc: 'App Store / Play Store에서 설치 후 회원가입', req: true },
-      { id: 't1_2', title: '미팅룸 예약 방법 확인', desc: '앱 → 예약 → 미팅룸 / 30분 단위 / 개인 최대 3시간 / 미사용 시 반드시 취소 (크레딧 반환)', req: false },
-      { id: 't1_3', title: '복합기 초기 세팅', desc: '앱 → 내 계정 → 설정 → 복합기 계정 등록 → print.fastfive.co.kr 접속 → 드라이버 설치 → Sindoh Cloud MPS Manager 실행', req: true, link: 'https://print.fastfive.co.kr' },
-      { id: 't1_4', title: '복합기 출입카드 태깅 (최초 1회) & 출력 테스트', desc: '복합기 리더기에 출입카드 태깅 후 테스트 출력 확인', req: true },
-      { id: 't1_5', title: '공용공간 이용 규칙 숙지', desc: '라운지 취식 11:00~14:00 / 미팅룸 음료만 / 냉장고 최대 30일(스티커 필수) / 건물 전체 금연 / 배달은 엘리베이터 홀 수령', req: false },
-      { id: 't1_6', title: '주차 안내 확인', desc: '방문 주차 지원 불가 / 최초 30분 2,000원 / 외부 손님 주차증 → People Team 박지유', req: false },
-    ]
-  },
-  {
-    id: 'm2', num: 2, emoji: '📶',
-    title: 'Wi-Fi 연결',
-    sub: '💻 사내 내부망 접속',
-    tasks: [
-      { id: 't2_1', title: 'MUSTIT_5G 연결', desc: '비밀번호: mustit3512 / 내부망(유선) 연결이 필요한 작업은 랜선 사용', req: true },
-      { id: 't2_2', title: 'Wiki / Jira 접속 확인 (내부망 테스트)', desc: 'wifi 연결 후 wiki.mustit.xyz 접속 확인', req: true, link: 'https://wiki.mustit.xyz' },
-    ]
-  },
-  {
-    id: 'm3', num: 3, emoji: '⏰',
-    title: '네이버웍스 가입 & 서류 서명',
-    sub: '📋 그룹웨어 · 근태 · 서류 · 결재',
-    tasks: [
-      { id: 't3_1', title: '네이버웍스 앱 설치 및 가입', desc: 'mustit.ncpworkplace.com / PC·모바일 모두 설치', req: true, link: 'https://mustit.ncpworkplace.com/' },
-      { id: 't3_2', title: '근로계약서 서명', desc: '워크플레이스 수신함에서 확인 후 서명', req: true },
-      { id: 't3_3', title: '연봉계약서 서명', desc: '워크플레이스 수신함에서 확인 후 서명', req: true },
-      { id: 't3_4', title: '보안서약서 서명', desc: '워크플레이스 수신함에서 확인 후 서명', req: true },
-      { id: 't3_5', title: '개인정보 이용동의서 서명', desc: '워크플레이스 수신함에서 확인 후 서명', req: true },
-      { id: 't3_6', title: '출퇴근 방법 숙지 (출근 버튼 클릭 연습)', desc: '매일 출근 시 네이버웍스 앱/PC에서 출근 버튼 클릭 / 외출은 1시간 단위, 당일 출근 전 외출 신청 불가', req: true },
-      { id: 't3_7', title: '결재 올리는 방법 학습 (명함 결재 연습)', desc: '결재 메뉴 → 명함 신청 결재 올려보기', req: true },
-      { id: 't3_8', title: '연차 사용 방법 숙지', desc: '반차(4시간) / 연차(8시간) 신청 방법 확인', req: false },
-    ]
-  },
-  {
-    id: 'm4', num: 4, emoji: '💻',
-    title: 'Teams 가입 & Intune 조인 & MS365 설치',
-    sub: '🔧 사내 메신저 · 장비 등록 · Office 설치',
-    tasks: [
-      { id: 't4_1', title: '사내 계정 비밀번호 변경', desc: '반드시 내부망(유선) 연결 후 진행 / 계정: corp\\이니셜+성 (ex. corp\\wbkim) / 초기 PW: Passw@rd!1', req: true, link: 'https://corp-login.mustit.co.kr/ADFS/portal/updatepassword/' },
-      { id: 't4_2', title: 'Intune 조인 (AD 등록)', desc: 'Mac: wiki.mustit.xyz/x/CHYZAw / Windows: wiki.mustit.xyz/x/ghOdAw', req: true, link: 'https://wiki.mustit.xyz/x/CHYZAw' },
-      { id: 't4_3', title: 'MS Teams 설치 (PC + 모바일 모두!)', desc: '사내 모든 소통은 Teams로 진행됩니다. PC와 스마트폰 모두 설치', req: true },
-      { id: 't4_4', title: 'Teams 프로필 사진 & 상태 메시지 등록', desc: '우측 상단 프로필 → 사진 등록 / 상태: Tribe > Chapter > 직무 / 09:10~18:10 / 12:30~13:30', req: true },
-      { id: 't4_5', title: 'MS Office 설치', desc: 'Windows: Intune 등록 시 자동 설치 / Mac: support.microsoft.com/ko-kr 에서 수동 설치', req: true },
-      { id: 't4_6', title: 'MS365 MFA 등록', desc: '다단계 인증 설정 가이드: wiki.mustit.xyz/x/khBnAw', req: true, link: 'https://wiki.mustit.xyz/x/khBnAw' },
-      { id: 't4_7', title: 'Outlook 메일 & 캘린더 설정', desc: '회사 계정으로 로그인 후 메일 수신 확인 / Outlook Calendar로 전사 일정 관리 & 회의실 예약', req: true, link: 'https://wiki.mustit.xyz/x/bYM8' },
-    ]
-  },
-  {
-    id: 'm5', num: 5, emoji: '📖',
-    title: 'Wiki 프로필 & 복지 안내 & Admin 로그인',
-    sub: '🌟 사내 아카이빙 · 복지 확인 · 교보문고',
-    tasks: [
-      { id: 't5_1', title: 'Wiki 프로필 사진 등록', desc: 'wiki.mustit.xyz → 우측 상단 프로필 → Edit profile → 사진 등록', req: true, link: 'https://wiki.mustit.xyz' },
-      { id: 't5_2', title: 'Wiki About me 커뮤니케이션 Q&A 작성', desc: '내향/외향, 피드백 선호 방식, 함께 일하고 싶은 동료, 관심사 등 기재 (역량/경력 제외 — 소통 방식만!)', req: true },
-      { id: 't5_3', title: '복지 제도 전체 확인', desc: '데일리플렉스 출근제도 / 교육비 지원 / 건강검진 공가 / 임직원 할인 / Refresh 휴가(안식휴가) / 근속자 포상 / 생일 적립금&외출권 / 경조사 지원 / 석식 지원 / 소통지원비 / 외근·접대비 / 카카오T / 근로자상담 / 재택근무 / EAP 상담', req: true },
-      { id: 't5_4', title: '교보문고 전자도서관 계정 등록', desc: 'People Team 안내에 따라 계정 등록 후 이용', req: true },
-      { id: 't5_5', title: '서비스 Admin 최초 로그인 (할인쿠폰 발급 목적)', desc: 'admin.mustit.xyz → 사내계정 로그인 → 최초 인증번호: 12345 입력 / 업무상 미사용자도 1회 필수!', req: true, link: 'https://admin.mustit.xyz' },
-      { id: 't5_6', title: 'Jira 기본 사용법 확인', desc: 'jira.mustit.xyz (내부망 전용) / 이슈 만들기 후 반드시 "상신하기/요청하기/신청하기" 버튼 클릭까지 해야 완료!', req: true, link: 'https://jira.mustit.xyz/' },
-    ]
-  },
-  {
-    id: 'm6', num: 6, emoji: '🔐',
-    title: 'Forticlient 설치 & VPN 승인',
-    sub: '🛡 ISMS 인증 · 외부 접속 보안',
-    tasks: [
-      { id: 't6_1', title: 'Forticlient 설치 및 임직원 인증', desc: '가이드: wiki.mustit.xyz/x/7M3kAQ', req: true, link: 'https://wiki.mustit.xyz/x/7M3kAQ' },
-      { id: 't6_2', title: 'VPN 사용 신청 (Jira → ISMS)', desc: 'JIRA → ISMS → 이슈 생성 후 반드시 "승인 요청" 버튼 클릭! / "열림" 상태는 신청 완료가 아닙니다', req: true, link: 'https://wiki.mustit.xyz/x/G1cdAQ' },
-      { id: 't6_3', title: 'VPN 연결 테스트', desc: '외부망(모바일 핫스팟 등)에서 VPN 켜고 wiki.mustit.xyz 접속 확인', req: true },
-    ]
-  },
-  {
-    id: 'm7', num: 7, emoji: '🚖',
-    title: '카카오 T 법인 인증',
-    sub: '🚗 업무 이동 지원',
-    tasks: [
-      { id: 't7_1', title: '카카오 T 앱 설치', desc: 'App Store / Play Store에서 카카오 T 설치', req: true },
-      { id: 't7_2', title: '법인 계정 인증 완료', desc: 'People Team 안내에 따라 법인 인증 진행', req: true },
-    ]
-  },
-  {
-    id: 'm8', num: 8, emoji: '🤖',
-    title: 'Claude AI 교육',
-    sub: '✨ AI 업무 활용 · 머스트잇 AI 도구',
-    tasks: [
-      { id: 't8_1', title: 'Claude 계정 생성', desc: 'claude.ai 접속 후 회사 이메일로 계정 생성', req: true, link: 'https://claude.ai' },
-      { id: 't8_2', title: 'Claude 기본 사용법 익히기', desc: '프롬프트 작성법, 파일 업로드, 대화 이어가기 등 기본 기능 체험', req: true },
-      { id: 't8_3', title: '업무 활용 예시 따라하기', desc: '문서 요약 / 이메일 초안 작성 / 데이터 분석 / 아이디어 브레인스토밍 중 1개 이상 직접 해보기', req: true },
-      { id: 't8_4', title: '머스트잇 AI 활용 가이드 확인', desc: 'Wiki → AI 활용 가이드 페이지에서 사내 AI 사용 정책 및 주의사항 확인', req: true, link: 'https://wiki.mustit.xyz' },
-    ]
+// 오늘 날짜 기본값
+document.getElementById('joindate').value = new Date().toISOString().split('T')[0];
+
+function startOnboarding() {
+  const name = document.getElementById('name').value.trim();
+  const dept = document.getElementById('dept').value;
+  const joindate = document.getElementById('joindate').value;
+  if (!name || !dept || !joindate) {
+    alert('모든 항목을 입력해주세요!');
+    return;
   }
-];
+  const userId = name + '_' + joindate;
+  const userData = { name, dept, joindate, userId, startedAt: new Date().toISOString() };
 
-const taskState = {};
-const missionSent = {};
-MISSIONS.forEach(m => m.tasks.forEach(t => { taskState[t.id] = false; }));
+  // 전체 사용자 목록 저장
+  const allUsers = JSON.parse(localStorage.getItem('mustit_users') || '{}');
+  if (!allUsers[userId]) allUsers[userId] = userData;
+  localStorage.setItem('mustit_users', JSON.stringify(allUsers));
 
-function totalTasks() { return MISSIONS.reduce((a, m) => a + m.tasks.length, 0); }
-function doneTasks() { return Object.values(taskState).filter(Boolean).length; }
-function doneMissions() { return MISSIONS.filter(m => m.tasks.every(t => taskState[t.id])).length; }
-
-function updateProgress() {
-  const tt = totalTasks(), dt = doneTasks(), dm = doneMissions();
-  const pct = Math.round(dt / tt * 100);
-  document.getElementById('prog-fill').style.width = pct + '%';
-  document.getElementById('prog-pct').textContent = pct + '%';
-  document.getElementById('prog-label').textContent = dm + '개 미션 완료';
-  document.getElementById('st-missions').textContent = dm + '/8';
-  document.getElementById('st-tasks').textContent = dt;
-  document.getElementById('st-pct').textContent = pct + '%';
-  if (dm === 8) document.getElementById('complete-banner').style.display = 'block';
+  // 현재 세션 저장
+  localStorage.setItem('mustit_current', JSON.stringify(userData));
+  window.location.href = 'onboarding.html';
 }
-
-function getMissionDone(mid) {
-  const m = MISSIONS.find(x => x.id === mid);
-  return m.tasks.every(t => taskState[t.id]);
-}
-function getMissionProgress(mid) {
-  const m = MISSIONS.find(x => x.id === mid);
-  return m.tasks.filter(t => taskState[t.id]).length + '/' + m.tasks.length;
-}
-
-function updateCard(mid) {
-  const m = MISSIONS.find(x => x.id === mid);
-  const allDone = getMissionDone(mid);
-  const badge = document.getElementById('badge-' + mid);
-  const prog = document.getElementById('prog-' + mid);
-  const btn = document.getElementById('btn-' + mid);
-  const card = document.getElementById('card-' + mid);
-
-  prog.textContent = getMissionProgress(mid);
-
-  if (missionSent[mid]) {
-    badge.className = 'mission-badge done';
-    badge.textContent = '✓';
-    card.classList.add('completed');
-    btn.className = 'teams-btn sent';
-    btn.textContent = '✓ Teams 알림 전송 완료';
-  } else if (allDone) {
-    badge.className = 'mission-badge active';
-    badge.textContent = m.num;
-    btn.className = 'teams-btn ready';
-    btn.textContent = '📨 Teams로 완료 알림 전송하기';
-  } else {
-    badge.className = 'mission-badge';
-    badge.textContent = m.num;
-    btn.className = 'teams-btn locked';
-    btn.textContent = '모든 항목 체크 후 완료 가능';
-  }
-}
-
-function toggleTask(tid, mid) {
-  taskState[tid] = !taskState[tid];
-  const cb = document.getElementById('cb-' + tid);
-  const item = document.getElementById('task-' + tid);
-  if (taskState[tid]) {
-    cb.classList.add('on'); cb.textContent = '✓';
-    item.classList.add('done');
-  } else {
-    cb.classList.remove('on'); cb.textContent = '';
-    item.classList.remove('done');
-  }
-  updateCard(mid);
-  updateProgress();
-}
-
-function toggleMission(mid) {
-  const body = document.getElementById('body-' + mid);
-  const chev = document.getElementById('chev-' + mid);
-  const isOpen = body.classList.contains('open');
-  document.querySelectorAll('.mission-body').forEach(b => b.classList.remove('open'));
-  document.querySelectorAll('.chevron').forEach(c => c.classList.remove('open'));
-  if (!isOpen) { body.classList.add('open'); chev.classList.add('open'); }
-}
-
-function sendTeams(mid) {
-  if (missionSent[mid] || !getMissionDone(mid)) return;
-  missionSent[mid] = true;
-  updateCard(mid);
-  updateProgress();
-  const m = MISSIONS.find(x => x.id === mid);
-  const now = new Date();
-  const t = now.getHours().toString().padStart(2,'0') + ':' + now.getMinutes().toString().padStart(2,'0');
-  const list = document.getElementById('log-list');
-  const div = document.createElement('div');
-  const allDone = doneMissions() === 8;
-  div.className = 'log-item ' + (allDone ? 'success' : 'new');
-  div.innerHTML = (allDone
-    ? '🎉 <strong>전체 온보딩 완료!</strong> 모든 미션을 마쳤습니다. People Team 확인 부탁드립니다.'
-    : '📋 <strong>Mission ' + m.num + ' 완료</strong> — ' + m.title) +
-    '<div class="log-time">' + t + '</div>';
-  list.insertBefore(div, list.firstChild);
-  // 실제 Teams Webhook 연동 시 아래 주석 해제 후 URL 입력
-  // fetch('YOUR_TEAMS_WEBHOOK_URL', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ text: 'Mission ' + m.num + ' 완료: ' + m.title }) });
-}
-
-function render() {
-  const wrap = document.getElementById('missions-wrap');
-  MISSIONS.forEach((m, i) => {
-    const card = document.createElement('div');
-    card.className = 'mission-card';
-    card.id = 'card-' + m.id;
-    card.style.animationDelay = (i * 0.06) + 's';
-
-    const tasksHTML = m.tasks.map(t => `
-      <div class="task" id="task-${t.id}" onclick="toggleTask('${t.id}','${m.id}')">
-        <div class="task-cb" id="cb-${t.id}"></div>
-        <div class="task-content">
-          <div class="task-title">${t.title}</div>
-          <div class="task-desc">${t.desc}</div>
-          ${t.link ? `<a class="task-link" href="${t.link}" target="_blank" onclick="event.stopPropagation()">↗ ${t.link.replace('https://','').split('/')[0]}</a>` : ''}
-        </div>
-        <span class="task-tag ${t.req ? 'tag-req' : 'tag-opt'}">${t.req ? '필수' : '참고'}</span>
-      </div>
-    `).join('');
-
-    card.innerHTML = `
-      <div class="mission-header" onclick="toggleMission('${m.id}')">
-        <div class="mission-badge" id="badge-${m.id}">${m.num}</div>
-        <div class="mission-info">
-          <div class="mission-title">${m.emoji} ${m.title}</div>
-          <div class="mission-sub">${m.sub}</div>
-        </div>
-        <div class="mission-meta">
-          <span class="mission-prog" id="prog-${m.id}">0/${m.tasks.length}</span>
-          <div class="chevron" id="chev-${m.id}">▼</div>
-        </div>
-      </div>
-      <div class="mission-body" id="body-${m.id}">
-        ${tasksHTML}
-        <div class="mission-action">
-          <button class="teams-btn locked" id="btn-${m.id}" onclick="sendTeams('${m.id}')">
-            모든 항목 체크 후 완료 가능
-          </button>
-        </div>
-      </div>
-    `;
-    wrap.appendChild(card);
-  });
-
-  // 첫 번째 미션 자동 오픈
-  document.getElementById('body-m1').classList.add('open');
-  document.getElementById('chev-m1').classList.add('open');
-  updateProgress();
-}
-
-render();
 </script>
 </body>
 </html>
