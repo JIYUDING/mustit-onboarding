@@ -227,6 +227,19 @@ function toggleHR(id) {
   el.textContent = hrState[id] ? '✓' : '';
   localStorage.setItem('mustit_hr_tasks', JSON.stringify(hrState));
 }
+// 대시보드 비밀번호 보호
+(function() {
+  const pw = localStorage.getItem('mustit_dashboard_auth');
+  if(pw !== 'mustitpeople') {
+    const input = prompt('People Team 전용 페이지입니다.\n비밀번호를 입력해주세요:');
+    if(input !== 'mustitpeople') {
+      document.body.innerHTML = '<div style="display:flex;align-items:center;justify-content:center;height:100vh;font-family:Noto Sans KR,sans-serif;color:#888;font-size:14px;">접근 권한이 없습니다.</div>';
+      throw new Error('Unauthorized');
+    }
+    localStorage.setItem('mustit_dashboard_auth', 'mustitpeople');
+  }
+})();
+
 const IT_WEBHOOK = 'https://default5b2597aa61bf4662b414259f1ab1df.98.environment.api.powerplatform.com:443/powerautomate/automations/direct/workflows/9c1bcf05daba448b97808ddb7c4d3666/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=Belok316SBbfQ6xQLkihhkdWrJJvaUiMuuHIsPi10fM';
 
 function notifyIT(event) {
