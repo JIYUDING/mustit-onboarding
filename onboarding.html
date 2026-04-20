@@ -177,7 +177,18 @@ function resetUser() {
 const WEBHOOK_URL = 'https://default5b2597aa61bf4662b414259f1ab1df.98.environment.api.powerplatform.com:443/powerautomate/automations/direct/workflows/9c1bcf05daba448b97808ddb7c4d3666/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=Belok316SBbfQ6xQLkihhkdWrJJvaUiMuuHIsPi10fM';
 
 const MISSIONS = [
-  { id:'m1', num:1, emoji:'🏢', title:'패스트파이브 입주 오피스 안내', sub:'📍 신사1호점 · 공용공간 & 복합기',
+  { id:'m0', num:1, emoji:'👋', title:'대표님 회사 소개 & 조직문화', sub:'🏢 머스트잇을 더 깊이 이해해요',
+    tasks:[
+      {id:'t0_1', title:'대표님 회사 소개 미팅 참석', get desc() { 
+    const u = JSON.parse(localStorage.getItem('mustit_current')||'{}');
+    if(u.meeting) { const d=new Date(u.meeting); return '일정: '+d.toLocaleDateString('ko-KR')+' '+d.toLocaleTimeString('ko-KR',{hour:'2-digit',minute:'2-digit'}); }
+    return '인사담당자가 잡아드린 일정 확인 후 참석';
+  }, req:true},
+      {id:'t0_2', title:'조직문화 Wiki 읽기', desc:'머스트잇의 일하는 방식, 문화, 가치관 확인', req:true, link:'https://wiki.mustit.xyz/pages/viewpage.action?pageId=46698857'},
+      {id:'t0_3', title:'조직도 확인', desc:'우리 팀 구성원과 각 팀의 역할 파악', req:true, link:'https://wiki.mustit.xyz/pages/viewpage.action?pageId=44222975'},
+    ]
+  },
+  { id:'m1', num:2, emoji:'🏢', title:'패스트파이브 입주 오피스 안내', sub:'📍 신사1호점 · 공용공간 & 복합기',
     tasks:[
       {id:'t1_1', title:'FASTFIVE 앱 설치 및 가입', desc:'App Store / Play Store에서 설치 후 회원가입', req:true},
       {id:'t1_2', title:'미팅룸 예약 방법 확인', desc:'앱 → 예약 → 미팅룸 / 30분 단위 / 개인 최대 3시간 / 미사용 시 반드시 취소!', req:false},
@@ -187,13 +198,13 @@ const MISSIONS = [
       {id:'t1_6', title:'주차 안내 확인', desc:'방문 주차 지원 불가 / 외부 손님 주차증 → People Team 박지유', req:false},
     ]
   },
-  { id:'m2', num:2, emoji:'📶', title:'Wi-Fi 연결', sub:'💻 사내 내부망 접속',
+  { id:'m2', num:3, emoji:'📶', title:'Wi-Fi 연결', sub:'💻 사내 내부망 접속',
     tasks:[
       {id:'t2_1', title:'MUSTIT_5G 연결', desc:'비밀번호: mustit3512 / 내부망(유선) 연결이 필요한 작업은 랜선 사용', req:true},
       {id:'t2_2', title:'Wiki / Jira 접속 확인', desc:'Wi-Fi 연결 후 wiki.mustit.xyz 접속 확인', req:true, link:'https://wiki.mustit.xyz'},
     ]
   },
-  { id:'m3', num:3, emoji:'⏰', title:'네이버웍스 가입 & 서류 서명', sub:'📋 그룹웨어 · 근태 · 서류 · 결재',
+  { id:'m3', num:4, emoji:'⏰', title:'네이버웍스 가입 & 서류 서명', sub:'📋 그룹웨어 · 근태 · 서류 · 결재',
     tasks:[
       {id:'t3_1', title:'네이버웍스 앱 설치 및 가입', desc:'mustit.ncpworkplace.com / PC·모바일 모두 설치', req:true, link:'https://mustit.ncpworkplace.com/'},
       {id:'t3_2', title:'근로계약서 서명', desc:'워크플레이스 수신함에서 확인 후 서명', req:true},
@@ -205,7 +216,7 @@ const MISSIONS = [
       {id:'t3_8', title:'연차 사용 방법 숙지', desc:'반차(4시간) / 연차(8시간) 신청 방법 확인', req:false},
     ]
   },
-  { id:'m4', num:4, emoji:'💻', title:'Teams 가입 & Intune 조인 & MS365 설치', sub:'🔧 사내 메신저 · 장비 등록 · Office 설치',
+  { id:'m4', num:5, emoji:'💻', title:'Teams 가입 & Intune 조인 & MS365 설치', sub:'🔧 사내 메신저 · 장비 등록 · Office 설치',
     tasks:[
       {id:'t4_1', title:'사내 계정 비밀번호 변경', desc:'반드시 내부망(유선) 연결 후 / 계정: corp\\이니셜+성 / 초기 PW: Passw@rd!1', req:true, link:'https://corp-login.mustit.co.kr/ADFS/portal/updatepassword/'},
       {id:'t4_2', title:'Intune 조인 (AD 등록)', desc:'Mac: wiki.mustit.xyz/x/CHYZAw / Windows: wiki.mustit.xyz/x/ghOdAw', req:true, link:'https://wiki.mustit.xyz/x/CHYZAw'},
@@ -216,38 +227,51 @@ const MISSIONS = [
       {id:'t4_7', title:'Outlook 메일 & 캘린더 설정', desc:'회사 계정 로그인 후 메일 수신 확인 / Outlook Calendar로 전사 일정 관리', req:true},
     ]
   },
-  { id:'m5', num:5, emoji:'📖', title:'Wiki 프로필 & 복지 안내 & Admin 로그인', sub:'🌟 사내 아카이빙 · 복지 확인',
+  { id:'m5', num:6, emoji:'📖', title:'Wiki 프로필 & 복지 안내 & Admin 로그인', sub:'🌟 사내 아카이빙 · 복지 확인',
     tasks:[
       {id:'t5_1', title:'Wiki 프로필 사진 등록', desc:'wiki.mustit.xyz → 우측 상단 프로필 → Edit profile → 사진 등록', req:true, link:'https://wiki.mustit.xyz'},
       {id:'t5_2', title:'Wiki About me Q&A 작성', desc:'내향/외향, 피드백 선호 방식, 관심사 등 기재 (소통 방식만, 역량/경력 제외)', req:true},
-      {id:'t5_3', title:'복지 제도 전체 확인', desc:'데일리플렉스 / 교육비 / 건강검진 / 임직원 할인 / Refresh 휴가 / 근속 포상 / 생일 적립금 / 경조사 / 석식 / 소통지원비 / 재택근무 등', req:true},
-      {id:'t5_4', title:'교보문고 전자도서관 계정 등록', desc:'People Team 안내에 따라 계정 등록', req:true},
+      {id:'t5_3', title:'복지 제도 전체 확인', desc:'데일리플렉스 / 교육비 / 건강검진 / 임직원 할인 / Refresh 휴가 / 근속 포상 / 생일 적립금 / 경조사 / 석식 / 소통지원비 / 재택근무 등', req:true, link:'https://wiki.mustit.xyz/pages/viewpage.action?pageId=6390197'},
+      {id:'t5_4', title:'교보문고 전자도서관 계정 등록', desc:'People Team 안내에 따라 계정 등록 후 이용', req:true, link:'https://mustit.dkyobobook.co.kr/main.ink'},
       {id:'t5_5', title:'서비스 Admin 최초 로그인', desc:'admin.mustit.xyz → 사내계정 로그인 → 최초 인증번호: 12345 / 업무 미사용자도 1회 필수!', req:true, link:'https://admin.mustit.xyz'},
       {id:'t5_6', title:'Jira 기본 사용법 확인', desc:'jira.mustit.xyz (내부망) / 이슈 만들기 후 반드시 "상신하기/신청하기" 버튼까지 클릭!', req:true, link:'https://jira.mustit.xyz/'},
     ]
   },
-  { id:'m6', num:6, emoji:'🔐', title:'Forticlient 설치 & VPN 승인', sub:'🛡 ISMS 인증 · 외부 접속 보안',
+  { id:'m6', num:7, emoji:'🔐', title:'Forticlient 설치 & VPN 승인', sub:'🛡 ISMS 인증 · 외부 접속 보안',
     tasks:[
       {id:'t6_1', title:'Forticlient 설치 및 임직원 인증', desc:'가이드: wiki.mustit.xyz/x/7M3kAQ', req:true, link:'https://wiki.mustit.xyz/x/7M3kAQ'},
       {id:'t6_2', title:'VPN 사용 신청 (Jira → ISMS)', desc:'이슈 생성 후 반드시 "승인 요청" 클릭! "열림" 상태는 신청 완료가 아닙니다', req:true, link:'https://wiki.mustit.xyz/x/G1cdAQ'},
       {id:'t6_3', title:'VPN 연결 테스트', desc:'외부망에서 VPN 켜고 wiki.mustit.xyz 접속 확인', req:true},
     ]
   },
-  { id:'m7', num:7, emoji:'🚖', title:'카카오 T 법인 인증', sub:'🚗 업무 이동 지원',
+  { id:'m7', num:8, emoji:'🚖', title:'카카오 T 법인 인증', sub:'🚗 업무 이동 지원',
     tasks:[
       {id:'t7_1', title:'카카오 T 앱 설치', desc:'App Store / Play Store에서 카카오 T 설치', req:true},
       {id:'t7_2', title:'법인 계정 인증 완료', desc:'People Team 안내에 따라 법인 인증 진행', req:true},
     ]
   },
-  { id:'m8', num:8, emoji:'🤖', title:'Claude AI 교육', sub:'✨ AI 업무 활용',
+  { id:'m8', num:9, emoji:'🤖', title:'Claude AI 교육', sub:'✨ 1명이 100명의 생산성을 낸다',
     tasks:[
-      {id:'t8_1', title:'Claude 계정 생성', desc:'claude.ai 접속 후 회사 이메일로 계정 생성', req:true, link:'https://claude.ai'},
-      {id:'t8_2', title:'Claude 기본 사용법 익히기', desc:'프롬프트 작성법, 파일 업로드, 대화 이어가기 등 기본 기능 체험', req:true},
-      {id:'t8_3', title:'업무 활용 예시 따라하기', desc:'문서 요약 / 이메일 초안 / 데이터 분석 / 브레인스토밍 중 1개 이상 직접 해보기', req:true},
-      {id:'t8_4', title:'머스트잇 AI 활용 가이드 확인', desc:'Wiki → AI 활용 가이드에서 사내 AI 사용 정책 및 주의사항 확인', req:true, link:'https://wiki.mustit.xyz'},
+      {id:'t8_1', title:'Claude Desktop 설치 및 로그인', desc:'claude.ai/download 에서 다운로드 → 설치 후 회사 계정으로 로그인', req:true, link:'https://claude.ai/download'},
+      {id:'t8_2', title:'MCP 서버 연결하기', desc:'설정 → 커넥터 → 커넥터 둘러보기 → Amplitude, Figma, Teams 등 필요한 서비스 연결 / 연결 확인: "앰플리튜드 MCP 연결됐어?" 질의', req:true},
+      {id:'t8_3', title:'Claude AI 교육 자료 확인 (사내 PPT)', desc:'AI 발전 단계 · MCP 개념 · Cowork · Scheduled · Project 활용법 숙지', req:true},
+      {id:'t8_4', title:'Cowork 기능 체험', desc:'PC 소프트웨어 자동 제어 기능 — Claude가 직접 앱을 다루는 에이전트 AI 체험', req:true},
+      {id:'t8_5', title:'부서별 Project 설정하기', desc:'팀 공유 Claude 공간 생성 → 부서 문서/정책 업로드 → 팀원 추가 / MD·CS·Platform·MKT·CRM 활용 예시 참고', req:true},
+      {id:'t8_6', title:'Claude 원정대 채널 입장', desc:'Teams → Claude 원정대 채널 입장 후 질문 및 사례 공유', req:false},
+      {id:'t8_7', title:'내 업무 자동화 아이디어 1개 정하기', desc:'내 업무에서 자동화하고 싶은 것 1개 선정 → 팀장 또는 Claude 원정대 채널에 공유', req:false},
     ]
   }
 ];
+
+// URL 파라미터로 접속한 경우 (인사담당자가 링크 전달)
+const urlParams = new URLSearchParams(window.location.search);
+const uidFromUrl = urlParams.get('uid');
+if (uidFromUrl) {
+  const allUsers = JSON.parse(localStorage.getItem('mustit_users') || '{}');
+  if (allUsers[uidFromUrl]) {
+    localStorage.setItem('mustit_current', JSON.stringify(allUsers[uidFromUrl]));
+  }
+}
 
 // 유저 정보 로드
 const currentUser = JSON.parse(localStorage.getItem('mustit_current') || 'null');
@@ -264,6 +288,14 @@ document.getElementById('tb-name').textContent = name + '님';
 document.getElementById('tb-dept').textContent = dept;
 document.getElementById('tb-day').textContent = 'D+' + diffDays;
 document.getElementById('hero-sub').textContent = name + '님, 함께해서 반가워요! 아래 미션을 순서대로 완료해주세요.';
+
+// 대표님 미팅 일정 표시
+if (currentUser.meeting) {
+  const meetingDt = new Date(currentUser.meeting);
+  const meetingStr = meetingDt.toLocaleDateString('ko-KR') + ' ' + meetingDt.toLocaleTimeString('ko-KR', {hour:'2-digit', minute:'2-digit'});
+  const m0task = document.querySelector ? null : null;
+  // 미션 렌더 후 적용되므로 아래 MISSIONS에 반영
+}
 
 // 저장된 체크 상태 로드
 const storageKey = 'mustit_progress_' + userId;
@@ -298,10 +330,10 @@ function updateProgress() {
   document.getElementById('prog-fill').style.width=pct+'%';
   document.getElementById('prog-pct').textContent=pct+'%';
   document.getElementById('prog-label').textContent=dm+'개 미션 완료';
-  document.getElementById('st-missions').textContent=dm+'/8';
+  document.getElementById('st-missions').textContent=dm+'/9';
   document.getElementById('st-tasks').textContent=dt;
   document.getElementById('st-pct').textContent=pct+'%';
-  if(dm===8) document.getElementById('complete-banner').style.display='block';
+  if(dm===9) document.getElementById('complete-banner').style.display='block';
 }
 
 function updateCard(mid) {
@@ -350,7 +382,7 @@ function sendTeams(mid) {
   const m=MISSIONS.find(x=>x.id===mid);
   const now=new Date();
   const t=now.getHours().toString().padStart(2,'0')+':'+now.getMinutes().toString().padStart(2,'0');
-  const allDone=doneMissions()===8;
+  const allDone=doneMissions()===9;
   const list=document.getElementById('log-list');
   const div=document.createElement('div');
   div.className='log-item '+(allDone?'success':'new');

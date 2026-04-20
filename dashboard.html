@@ -64,6 +64,28 @@ body{font-family:'Noto Sans KR',sans-serif;background:var(--dark);color:white;mi
 .legend-item{display:flex;align-items:center;gap:5px;font-size:11px;color:var(--gray);}
 .legend-dot{width:8px;height:8px;border-radius:50%;}
 
+.modal-bg{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.7);z-index:200;display:flex;align-items:center;justify-content:center;padding:20px;}
+.modal{background:var(--dark2);border:1px solid var(--border);border-radius:20px;padding:28px;width:100%;max-width:400px;}
+.modal h3{font-size:16px;font-weight:700;margin-bottom:20px;}
+.mfield{margin-bottom:14px;}
+.mfield label{display:block;font-size:11px;color:var(--gray);margin-bottom:5px;}
+.mfield input,.mfield select{width:100%;padding:10px 12px;background:var(--dark3);border:1px solid var(--border);border-radius:8px;color:white;font-size:13px;font-family:"Noto Sans KR",sans-serif;outline:none;}
+.mfield input:focus,.mfield select:focus{border-color:rgba(232,25,44,0.5);}
+.mfield select option{background:var(--dark2);}
+.modal-btns{display:flex;gap:8px;margin-top:20px;}
+.modal-cancel{flex:1;padding:10px;background:transparent;border:1px solid var(--border);border-radius:8px;color:var(--gray);font-size:13px;cursor:pointer;font-family:"Noto Sans KR",sans-serif;}
+.modal-submit{flex:2;padding:10px;background:var(--red);border:none;border-radius:8px;color:white;font-size:13px;font-weight:700;cursor:pointer;font-family:"Noto Sans KR",sans-serif;}
+.link-box{background:var(--dark3);border:1px solid var(--border);border-radius:8px;padding:10px 12px;font-size:12px;color:var(--gray);word-break:break-all;margin-top:12px;cursor:pointer;}
+.link-box:hover{border-color:rgba(255,255,255,0.2);}
+.copy-btn{width:100%;padding:8px;background:transparent;border:1px solid var(--border);border-radius:8px;color:var(--gray);font-size:12px;cursor:pointer;font-family:"Noto Sans KR",sans-serif;margin-top:6px;}
+.copy-btn:hover{color:white;border-color:rgba(255,255,255,0.2);}
+.add-btn{padding:8px 18px;background:var(--red);border:none;border-radius:8px;color:white;font-size:13px;font-weight:700;cursor:pointer;font-family:"Noto Sans KR",sans-serif;}
+.add-btn:hover{opacity:0.88;}
+.hr-tasks{background:var(--dark2);border:1px solid var(--border);border-radius:14px;padding:18px 20px;margin-bottom:28px;}
+.hr-task-item{display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--border);font-size:13px;}
+.hr-task-item:last-child{border-bottom:none;}
+.hr-cb{width:16px;height:16px;border-radius:4px;border:1.5px solid rgba(255,255,255,0.2);flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:9px;cursor:pointer;}
+.hr-cb.on{background:var(--success);border-color:var(--success);color:white;}
 @media(max-width:600px){
   .summary{grid-template-columns:repeat(2,1fr);}
   .person-card{flex-wrap:wrap;}
@@ -78,7 +100,35 @@ body{font-family:'Noto Sans KR',sans-serif;background:var(--dark);color:white;mi
     <div class="topbar-title">온보딩 대시보드</div>
     <div class="topbar-sub">People Team 전용</div>
   </div>
+  <button class="add-btn" onclick="openModal()">+ 입사자 등록</button>
   <button class="refresh-btn" onclick="loadDashboard()">↻ 새로고침</button>
+</div>
+
+<div id="modal-bg" class="modal-bg" style="display:none">
+  <div class="modal" id="modal-content">
+    <h3>신규 입사자 등록</h3>
+    <div class="mfield"><label>이름 *</label><input type="text" id="m-name" placeholder="홍길동"/></div>
+    <div class="mfield"><label>부서 *</label>
+      <select id="m-dept">
+        <option value="">부서 선택</option>
+        <optgroup label="Platform"><option>Back-end</option><option>Front-end</option><option>Product Management</option><option>Customer eXperience</option></optgroup>
+        <optgroup label="Business · Growth Unit"><option>Growth Planning</option><option>Growth Marketing</option><option>Design</option></optgroup>
+        <optgroup label="Business · Commerce Unit"><option>Online MD</option><option>AD</option></optgroup>
+        <optgroup label="Corporate"><option>Finance</option><option>People</option></optgroup>
+        <optgroup label="Expansion"><option>Market Expansion</option></optgroup>
+      </select>
+    </div>
+    <div class="mfield"><label>입사일 *</label><input type="date" id="m-date"/></div>
+    <div class="mfield"><label>대표님 미팅 일정</label><input type="datetime-local" id="m-meeting"/></div>
+    <div class="modal-btns">
+      <button class="modal-cancel" onclick="closeModal()">취소</button>
+      <button class="modal-submit" onclick="registerUser()">등록하기</button>
+    </div>
+    <div id="link-result" style="display:none">
+      <div class="link-box" id="link-text" onclick="copyLink()"></div>
+      <button class="copy-btn" onclick="copyLink()">📋 링크 복사해서 입사자에게 전달</button>
+    </div>
+  </div>
 </div>
 
 <div class="wrap">
@@ -87,6 +137,18 @@ body{font-family:'Noto Sans KR',sans-serif;background:var(--dark);color:white;mi
     <div class="sum-box highlight"><div class="sum-n" id="s-complete">0</div><div class="sum-l">온보딩 완료</div></div>
     <div class="sum-box"><div class="sum-n" id="s-inprogress">0</div><div class="sum-l">진행 중</div></div>
     <div class="sum-box"><div class="sum-n" id="s-avgpct">0%</div><div class="sum-l">평균 진행률</div></div>
+  </div>
+
+  <div class="section-title">인사담당자 입사 전 체크리스트</div>
+  <div class="hr-tasks" id="hr-tasks">
+    <div class="hr-task-item"><div class="hr-cb" id="hr1" onclick="toggleHR('hr1')"></div><span>신규 입사자 정보 등록 및 온보딩 링크 전달</span></div>
+    <div class="hr-task-item"><div class="hr-cb" id="hr2" onclick="toggleHR('hr2')"></div><span>대표님 회사 소개 미팅 일정 조율 및 캘린더 등록</span></div>
+    <div class="hr-task-item"><div class="hr-cb" id="hr3" onclick="toggleHR('hr3')"></div><span>노트북 및 장비 준비 (사번 발급 포함)</span></div>
+    <div class="hr-task-item"><div class="hr-cb" id="hr4" onclick="toggleHR('hr4')"></div><span>사내 계정 생성 (이메일·Jira·Wiki·Admin)</span></div>
+    <div class="hr-task-item"><div class="hr-cb" id="hr5" onclick="toggleHR('hr5')"></div><span>네이버웍스 계정 생성 및 서류 발송</span></div>
+    <div class="hr-task-item"><div class="hr-cb" id="hr6" onclick="toggleHR('hr6')"></div><span>Teams 온보딩 채널 초대</span></div>
+    <div class="hr-task-item"><div class="hr-cb" id="hr7" onclick="toggleHR('hr7')"></div><span>교보문고 전자도서관 계정 발급</span></div>
+    <div class="hr-task-item"><div class="hr-cb" id="hr8" onclick="toggleHR('hr8')"></div><span>카카오T 법인 인증 안내 전달</span></div>
   </div>
 
   <div class="section-title">미션 현황 범례</div>
@@ -133,6 +195,55 @@ function getMissionStatus(progress, missionSent, mid) {
   if (done === 0) return 'none';
   if (done === MISSION_TASKS[mid]) return 'partial';
   return 'partial';
+}
+
+// HR 체크리스트
+const hrState = JSON.parse(localStorage.getItem('mustit_hr_tasks') || '{}');
+function toggleHR(id) {
+  hrState[id] = !hrState[id];
+  const el = document.getElementById(id);
+  el.classList.toggle('on', hrState[id]);
+  el.textContent = hrState[id] ? '✓' : '';
+  localStorage.setItem('mustit_hr_tasks', JSON.stringify(hrState));
+}
+function initHR() {
+  Object.keys(hrState).forEach(id => {
+    const el = document.getElementById(id);
+    if(el && hrState[id]) { el.classList.add('on'); el.textContent = '✓'; }
+  });
+}
+
+// 모달
+function openModal() {
+  document.getElementById('modal-bg').style.display = 'flex';
+  document.getElementById('link-result').style.display = 'none';
+  document.getElementById('m-date').value = new Date().toISOString().split('T')[0];
+}
+function closeModal() {
+  document.getElementById('modal-bg').style.display = 'none';
+  document.getElementById('m-name').value = '';
+  document.getElementById('m-dept').value = '';
+  document.getElementById('m-meeting').value = '';
+}
+function registerUser() {
+  const name = document.getElementById('m-name').value.trim();
+  const dept = document.getElementById('m-dept').value;
+  const joindate = document.getElementById('m-date').value;
+  const meeting = document.getElementById('m-meeting').value;
+  if(!name || !dept || !joindate) { alert('이름, 부서, 입사일을 입력해주세요!'); return; }
+  const userId = name + '_' + joindate;
+  const userData = { name, dept, joindate, userId, meeting, startedAt: new Date().toISOString(), pct: 0 };
+  const allUsers = JSON.parse(localStorage.getItem('mustit_users') || '{}');
+  allUsers[userId] = userData;
+  localStorage.setItem('mustit_users', JSON.stringify(allUsers));
+  const link = window.location.origin + window.location.pathname.replace('dashboard.html','') + 'onboarding.html?uid=' + encodeURIComponent(userId);
+  document.getElementById('link-text').textContent = link;
+  document.getElementById('link-result').style.display = 'block';
+  loadDashboard();
+}
+function copyLink() {
+  const link = document.getElementById('link-text').textContent;
+  navigator.clipboard.writeText(link).then(() => alert('링크가 복사됐어요! 입사자에게 전달해주세요 😊'));
 }
 
 function deleteUser(userId) {
@@ -195,6 +306,7 @@ function loadDashboard() {
 }
 
 loadDashboard();
+initHR();
 // 30초마다 자동 새로고침
 setInterval(loadDashboard, 30000);
 </script>
