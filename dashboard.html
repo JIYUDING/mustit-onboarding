@@ -53,6 +53,8 @@ body{font-family:'Noto Sans KR',sans-serif;background:var(--dark);color:white;mi
 .mdot.sent{background:var(--success);}
 .mdot.partial{background:#FBBF24;}
 .day-badge{font-size:10px;color:var(--red);border:1px solid rgba(232,25,44,0.3);padding:2px 7px;border-radius:999px;}
+.del-btn{background:transparent;border:1px solid rgba(255,255,255,0.1);border-radius:6px;color:var(--gray);font-size:11px;padding:4px 10px;cursor:pointer;margin-top:4px;font-family:"Noto Sans KR",sans-serif;}
+.del-btn:hover{border-color:rgba(232,25,44,0.5);color:#FF6B7A;}
 
 .empty{text-align:center;padding:60px 20px;color:var(--gray);}
 .empty h3{font-size:16px;margin-bottom:8px;}
@@ -133,6 +135,14 @@ function getMissionStatus(progress, missionSent, mid) {
   return 'partial';
 }
 
+function deleteUser(userId) {
+  if(!confirm("이 입사자를 목록에서 삭제할까요?")) return;
+  const allUsers = JSON.parse(localStorage.getItem("mustit_users") || "{}");
+  delete allUsers[userId];
+  localStorage.setItem("mustit_users", JSON.stringify(allUsers));
+  loadDashboard();
+}
+
 function loadDashboard() {
   const allUsers = JSON.parse(localStorage.getItem('mustit_users') || '{}');
   const users = Object.values(allUsers);
@@ -178,6 +188,7 @@ function loadDashboard() {
           <div class="person-pct ${pctClass}">${pct}%</div>
           <div class="mini-bar-wrap"><div class="mini-bar ${barClass}" style="width:${pct}%"></div></div>
           <div class="day-badge">D+${day}</div>
+          <button class="del-btn" onclick="deleteUser('${u.userId}')">삭제</button>
         </div>
       </div>`;
   }).join('');
