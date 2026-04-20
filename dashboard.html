@@ -387,7 +387,10 @@ function registerUser(){
 }
 function copyLink(){
   const link=document.getElementById('link-text').textContent;
-  navigator.clipboard.writeText(link).then(()=>alert('링크 복사됐어요! 입사자에게 전달해주세요 😊'));
+  navigator.clipboard.writeText(link).then(()=>{
+    alert('링크 복사됐어요! 입사자에게 전달해주세요 😊');
+    closeModal();
+  });
 }
 
 loadDashboard();
