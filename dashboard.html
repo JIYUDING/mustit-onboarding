@@ -164,7 +164,11 @@ body{font-family:'Noto Sans KR',sans-serif;background:var(--dark);color:white;mi
   </div>
     <div class="hr-task-item"><div class="hr-cb" id="hr5" onclick="toggleHR('hr5')"></div><span>네이버웍스 계정 생성 및 서류 발송</span></div>
     <div class="hr-task-item"><div class="hr-cb" id="hr6" onclick="toggleHR('hr6')"></div><span>Teams 온보딩 채널 초대</span></div>
-    <div class="hr-task-item"><div class="hr-cb" id="hr7" onclick="toggleHR('hr7')"></div><span>교보문고 전자도서관 계정 발급</span></div>
+    <div class="hr-task-item" style="flex-wrap:wrap;gap:8px;">
+    <div class="hr-cb" id="hr7" onclick="toggleHR('hr7')"></div>
+    <span>교보문고 전자도서관 계정 발급</span>
+    <input type="text" id="kyobo-id" placeholder="발급된 아이디 메모" style="flex:1;min-width:180px;padding:5px 10px;background:var(--dark3);border:1px solid var(--border);border-radius:6px;color:white;font-size:12px;font-family:'Noto Sans KR',sans-serif;outline:none;" oninput="saveKyoboId()"/>
+  </div>
     <div class="hr-task-item"><div class="hr-cb" id="hr8" onclick="toggleHR('hr8')"></div><span>카카오T 법인 인증 안내 전달</span></div>
   </div>
 
@@ -271,11 +275,23 @@ function notifyIT(event) {
   });
 }
 
+function saveKyoboId() {
+  const val = document.getElementById('kyobo-id').value;
+  const hr = JSON.parse(localStorage.getItem('mustit_hr_tasks') || '{}');
+  hr['kyobo_id'] = val;
+  localStorage.setItem('mustit_hr_tasks', JSON.stringify(hr));
+}
+
 function initHR() {
   Object.keys(hrState).forEach(id => {
     const el = document.getElementById(id);
     if(el && hrState[id]) { el.classList.add('on'); el.textContent = '✓'; }
   });
+  // 교보문고 아이디 복원
+  if(hrState['kyobo_id']) {
+    const el = document.getElementById('kyobo-id');
+    if(el) el.value = hrState['kyobo_id'];
+  }
 }
 
 // 모달
