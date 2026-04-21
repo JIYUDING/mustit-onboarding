@@ -336,6 +336,29 @@ function loadDashboard(){
         <div class="hr-panel" id="panel_${u.userId}">
           <div class="hr-panel-title">인사담당자 체크리스트</div>
           ${hrHTML}
+          ${u.personalInfo ? `
+          <div style="margin-top:14px;padding-top:14px;border-top:1px solid var(--border);">
+            <div style="font-size:11px;font-weight:700;color:var(--gray);letter-spacing:1px;text-transform:uppercase;margin-bottom:10px;">📋 입사자 제출 정보</div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+              <div style="background:var(--dark3);border-radius:8px;padding:10px 12px;">
+                <div style="font-size:10px;color:var(--gray);margin-bottom:3px;">전화번호</div>
+                <div style="font-size:13px;">${u.personalInfo.phone}</div>
+              </div>
+              <div style="background:var(--dark3);border-radius:8px;padding:10px 12px;">
+                <div style="font-size:10px;color:var(--gray);margin-bottom:3px;">개인 이메일</div>
+                <div style="font-size:13px;">${u.personalInfo.email}</div>
+              </div>
+              <div style="background:var(--dark3);border-radius:8px;padding:10px 12px;grid-column:span 2;">
+                <div style="font-size:10px;color:var(--gray);margin-bottom:3px;">주소</div>
+                <div style="font-size:13px;">${u.personalInfo.address}</div>
+              </div>
+              <div style="background:var(--dark3);border-radius:8px;padding:10px 12px;grid-column:span 2;">
+                <div style="font-size:10px;color:var(--gray);margin-bottom:3px;">급여 계좌번호</div>
+                <div style="font-size:13px;">${u.personalInfo.account}</div>
+              </div>
+            </div>
+            <div style="font-size:10px;color:var(--gray);margin-top:6px;">제출 시각: ${new Date(u.personalInfo.submittedAt).toLocaleString('ko-KR')}</div>
+          </div>` : '<div style="margin-top:12px;padding:10px;background:rgba(232,25,44,0.08);border-radius:8px;font-size:12px;color:#FF6B7A;text-align:center;">⏳ 아직 개인정보를 입력하지 않았어요</div>'}
           <div class="hr-footer">
             <button class="link-copy-btn" onclick="copyUserLink('${u.userId}')">📋 온보딩 링크 복사</button>
             <button class="del-btn" onclick="deleteUser('${u.userId}')">삭제</button>
