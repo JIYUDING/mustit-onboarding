@@ -618,22 +618,13 @@ function togglePanel(userId) {
 
 // 패널 탭 전환 (People / Finance)
 function switchPanelTab(userId, tabName) {
-  const peopleContent = document.getElementById('ptab_people_'+userId);
-  const financeContent = document.getElementById('ptab_finance_'+userId);
-  const peopleBtn = document.getElementById('pbtab_people_'+userId);
-  const financeBtn = document.getElementById('pbtab_finance_'+userId);
-  if(tabName==='people'){
-    peopleContent.classList.remove('hidden');
-    financeContent.classList.add('hidden');
-    peopleBtn.classList.add('active');
-    financeBtn.classList.remove('active');
-  } else {
-    financeContent.classList.remove('hidden');
-    peopleContent.classList.add('hidden');
-    financeBtn.classList.add('active');
-    peopleBtn.classList.remove('active');
-    updateFinanceProgress(userId);
-  }
+  ['people','finance','review'].forEach(t => {
+    const content = document.getElementById('ptab_'+t+'_'+userId);
+    const btn = document.getElementById('pbtab_'+t+'_'+userId);
+    if(content) content.classList.toggle('hidden', t !== tabName);
+    if(btn) btn.classList.toggle('active', t === tabName);
+  });
+  if(tabName === 'finance') updateFinanceProgress(userId);
 }
 
 // ── 메인 탭 전환 ──
