@@ -331,8 +331,9 @@ if(!targetUser) {
   document.getElementById('day-badge').textContent = 'D+' + diffDays;
   document.getElementById('tb-sub').textContent = targetUser.name + '님 평가 · D+' + diffDays;
 
-  // D+75 체크
-  if(diffDays < 75) {
+  // D+75 체크 (URL에 ?preview=1 붙이면 미리 볼 수 있어요)
+  const isPreview = new URLSearchParams(window.location.search).get('preview') === '1';
+  if(diffDays < 75 && !isPreview) {
     document.getElementById('locked-screen').style.display = 'block';
     const unlockDate = new Date(joinDt.getTime() + 75*24*60*60*1000);
     document.getElementById('unlock-date').textContent = '오픈 예정일: ' + unlockDate.toLocaleDateString('ko-KR');
