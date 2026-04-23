@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MUST'IT 평가자 리뷰</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{--red:#E8192C;--dark:#14141F;--dark2:#1E1E2E;--dark3:#252535;--gray:#8888A0;--border:rgba(255,255,255,0.08);--success:#22C55E;--blue:#3B82F6;--amber:#F59E0B;}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Noto Sans KR',sans-serif;background:var(--dark);color:white;min-height:100vh;}
+.topbar{display:flex;align-items:center;gap:12px;padding:14px 28px;border-bottom:1px solid var(--border);background:rgba(20,20,31,0.95);position:sticky;top:0;z-index:100;backdrop-filter:blur(12px);}
+.logo-text{background:var(--red);color:white;font-family:'Bebas Neue',sans-serif;font-size:12px;letter-spacing:1px;padding:4px 9px;border-radius:5px;}
+.topbar-title{font-size:14px;font-weight:700;}
+.topbar-sub{font-size:11px;color:var(--gray);}
+.day-badge{margin-left:auto;font-size:12px;color:var(--blue);font-weight:700;border:1px solid rgba(59,130,246,0.3);padding:3px 10px;border-radius:999px;}
+.wrap{max-width:720px;margin:0 auto;padding:40px 24px;}
+
+/* 잠금 */
+.locked-screen{text-align:center;padding:80px 24px;display:none;}
+.locked-icon{font-size:64px;margin-bottom:20px;}
+.locked-screen h2{font-size:22px;font-weight:700;margin-bottom:8px;}
+.locked-screen p{font-size:14px;color:var(--gray);line-height:1.7;}
+.unlock-date{display:inline-block;margin-top:16px;font-size:13px;color:var(--blue);border:1px solid rgba(59,130,246,0.3);padding:6px 16px;border-radius:999px;}
+
+/* 헤더 */
+.review-header{margin-bottom:32px;}
+.review-tag{display:inline-block;font-size:11px;letter-spacing:1px;color:var(--blue);border:1px solid rgba(59,130,246,0.3);padding:4px 12px;border-radius:999px;margin-bottom:12px;}
+.review-header h1{font-family:'Bebas Neue',sans-serif;font-size:40px;letter-spacing:1px;margin-bottom:8px;}
+.review-header h1 span{color:var(--red);}
+.review-header p{font-size:13px;color:var(--gray);line-height:1.7;}
+
+/* 대상자 카드 */
+.target-card{background:var(--dark2);border:1px solid var(--border);border-radius:14px;padding:20px;margin-bottom:20px;display:flex;align-items:center;gap:14px;}
+.target-avatar{width:48px;height:48px;border-radius:12px;background:linear-gradient(135deg,var(--red),#ff6b6b);display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:800;color:white;flex-shrink:0;}
+.target-info{}
+.target-name{font-size:16px;font-weight:700;}
+.target-meta{font-size:12px;color:var(--gray);margin-top:3px;}
+.target-self-summary{margin-top:10px;padding:10px 12px;background:var(--dark3);border-radius:8px;font-size:12px;color:var(--gray);}
+
+/* 평가자 입력 */
+.evaluator-field{margin-bottom:14px;}
+.evaluator-field label{display:block;font-size:12px;color:var(--gray);margin-bottom:6px;}
+.evaluator-field input,.evaluator-field select{width:100%;padding:10px 12px;background:var(--dark3);border:1px solid var(--border);border-radius:8px;color:white;font-size:13px;font-family:'Noto Sans KR',sans-serif;outline:none;}
+.evaluator-field input:focus,.evaluator-field select:focus{border-color:rgba(59,130,246,0.4);}
+
+/* 섹션 */
+.section{background:var(--dark2);border:1px solid var(--border);border-radius:16px;padding:24px;margin-bottom:16px;animation:fadeUp .4s ease both;}
+.section-title{font-size:14px;font-weight:700;margin-bottom:4px;display:flex;align-items:center;gap:8px;}
+.section-desc{font-size:12px;color:var(--gray);margin-bottom:20px;line-height:1.6;}
+.section-num{width:24px;height:24px;border-radius:6px;background:var(--blue);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0;}
+
+/* 평가 항목 */
+.eval-item{padding:12px 0;border-bottom:1px solid var(--border);}
+.eval-item:last-child{border-bottom:none;}
+.eval-header{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:6px;}
+.eval-name{font-size:13px;font-weight:500;}
+.eval-desc{font-size:11px;color:var(--gray);line-height:1.5;flex:1;}
+.score-btns{display:flex;gap:4px;flex-shrink:0;}
+.score-btn{width:32px;height:32px;border-radius:6px;border:1px solid var(--border);background:transparent;color:var(--gray);font-size:12px;font-weight:700;cursor:pointer;transition:all .15s;font-family:'Noto Sans KR',sans-serif;}
+.score-btn:hover{border-color:rgba(59,130,246,0.4);color:var(--blue);}
+.score-btn.on{background:var(--blue);border-color:var(--blue);color:white;}
+.score-label{font-size:10px;color:var(--gray);display:flex;justify-content:space-between;margin-top:4px;}
+
+/* 원칙 평가 */
+.principle-eval{background:var(--dark3);border-radius:10px;padding:12px 14px;margin-bottom:10px;}
+.principle-eval-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;}
+.principle-eval-name{font-size:13px;font-weight:700;}
+.principle-eval-desc{font-size:11px;color:var(--gray);margin-bottom:8px;line-height:1.5;}
+.mini-score-btns{display:flex;gap:4px;}
+.mini-score-btn{width:36px;height:28px;border-radius:5px;border:1px solid var(--border);background:transparent;color:var(--gray);font-size:11px;font-weight:700;cursor:pointer;transition:all .15s;}
+.mini-score-btn.on{background:var(--blue);border-color:var(--blue);color:white;}
+
+/* 종합 */
+.final-decision{display:flex;gap:10px;margin-top:12px;}
+.decision-btn{flex:1;padding:14px;border-radius:10px;border:1px solid var(--border);background:transparent;color:var(--gray);font-size:13px;font-weight:700;cursor:pointer;font-family:'Noto Sans KR',sans-serif;transition:all .2s;}
+.decision-btn.pass.on{background:rgba(34,197,94,0.15);border-color:var(--success);color:var(--success);}
+.decision-btn.fail.on{background:rgba(232,25,44,0.1);border-color:var(--red);color:var(--red);}
+.decision-btn.extend.on{background:rgba(245,158,11,0.1);border-color:var(--amber);color:var(--amber);}
+
+.field textarea{width:100%;padding:12px 14px;background:var(--dark3);border:1px solid var(--border);border-radius:10px;color:white;font-size:13px;font-family:'Noto Sans KR',sans-serif;outline:none;resize:vertical;min-height:100px;line-height:1.7;}
+.field textarea:focus{border-color:rgba(59,130,246,0.4);}
+.field{margin-bottom:14px;}
+.field label{display:block;font-size:12px;color:var(--gray);margin-bottom:6px;}
+
+/* 점수 요약 */
+.score-summary{background:var(--dark3);border-radius:10px;padding:14px;margin-top:12px;}
+.score-summary-title{font-size:11px;color:var(--gray);margin-bottom:8px;}
+.score-row{display:flex;justify-content:space-between;align-items:center;font-size:13px;padding:4px 0;}
+.score-total{font-size:18px;font-weight:700;color:var(--blue);margin-top:8px;padding-top:8px;border-top:1px solid var(--border);}
+
+/* 제출 */
+.submit-section{text-align:center;padding:24px 0;}
+.submit-btn{padding:14px 48px;background:var(--blue);color:white;border:none;border-radius:12px;font-family:'Noto Sans KR',sans-serif;font-size:15px;font-weight:700;cursor:pointer;transition:all .2s;}
+.submit-btn:hover{background:#2563eb;transform:translateY(-1px);}
+.submit-notice{font-size:12px;color:var(--gray);margin-top:10px;}
+
+.done-screen{display:none;text-align:center;padding:60px 24px;}
+.pdf-btn-wrap{text-align:center;margin-bottom:16px;}
+.pdf-btn{padding:10px 28px;background:transparent;color:var(--gray);border:1px solid var(--border);border-radius:10px;font-family:"Noto Sans KR",sans-serif;font-size:13px;cursor:pointer;transition:all .2s;}
+.pdf-btn:hover{border-color:rgba(255,255,255,0.3);color:white;}
+.invite-section{background:var(--dark2);border:1px solid rgba(59,130,246,0.2);border-radius:16px;padding:20px;margin-bottom:16px;}
+.invite-title{font-size:13px;font-weight:700;margin-bottom:12px;color:#3B82F6;}
+.invite-row{display:flex;gap:8px;}
+.invite-input{flex:1;padding:10px 12px;background:var(--dark3);border:1px solid var(--border);border-radius:8px;color:white;font-size:13px;font-family:"Noto Sans KR",sans-serif;outline:none;}
+.invite-input:focus{border-color:rgba(59,130,246,0.4);}
+.invite-btn{padding:10px 18px;background:#3B82F6;border:none;border-radius:8px;color:white;font-size:13px;font-weight:700;cursor:pointer;font-family:"Noto Sans KR",sans-serif;white-space:nowrap;}
+.invite-btn:hover{background:#2563eb;}
+.invite-status{font-size:12px;color:var(--gray);margin-top:8px;}
+.done-screen h2{font-size:22px;font-weight:700;margin-bottom:8px;color:var(--success);}
+.done-screen p{font-size:14px;color:var(--gray);line-height:1.7;}
+
+@keyframes fadeUp{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
+</style>
+<style>
+@media print {
+  .topbar, .submit-section, .pdf-btn-wrap, .invite-section { display: none !important; }
+  body { background: white !important; color: black !important; }
+  .wrap { padding: 20px !important; }
+  .section { background: white !important; border: 1px solid #ddd !important; break-inside: avoid; margin-bottom: 12px !important; }
+  .section-num { background: #3B82F6 !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  .target-card { background: #f5f5f5 !important; border: 1px solid #ddd !important; }
+  .principle-eval { background: #f5f5f5 !important; }
+  .score-btn.on { background: #3B82F6 !important; color: white !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  .mini-score-btn.on { background: #3B82F6 !important; color: white !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  .decision-btn.on { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  textarea, input { border: 1px solid #ddd !important; background: #f9f9f9 !important; color: black !important; }
+}
+</style>
+<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+<script>emailjs.init('uvMbRhv9NNphE8z71dRrJ');</script>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="logo-text">MUST'IT</div>
+  <div>
+    <div class="topbar-title">평가자 리뷰</div>
+    <div class="topbar-sub" id="tb-sub">Evaluator Review · D+75</div>
+  </div>
+  <div class="day-badge" id="day-badge">D+?</div>
+</div>
+
+<div class="wrap">
+  <div class="locked-screen" id="locked-screen">
+    <div class="locked-icon">🔒</div>
+    <h2>아직 열리지 않았어요</h2>
+    <p>평가자 리뷰는 입사 후 75일부터 작성할 수 있어요.</p>
+    <div class="unlock-date" id="unlock-date">오픈 예정일: -</div>
+  </div>
+
+  <div class="done-screen" id="done-screen">
+    <div style="font-size:64px;margin-bottom:20px;">✅</div>
+    <h2>평가자 리뷰 제출 완료!</h2>
+    <p>제출이 완료됐습니다. 인사담당자에게 알림이 전송됐어요.</p>
+  </div>
+
+  <div id="review-form" style="display:none">
+    <!-- 평가자 초대 -->
+    <div class="invite-section">
+      <div class="invite-title">📧 평가자 초대 이메일 발송</div>
+      <div class="invite-row">
+        <input class="invite-input" id="inv-name" placeholder="평가자 이름 (예: 강성훈)"/>
+        <input class="invite-input" id="inv-email" placeholder="평가자 이메일 (예: shkang@mustit.co.kr)"/>
+        <button class="invite-btn" onclick="sendInvite()">✉️ 초대 발송</button>
+      </div>
+      <div class="invite-status" id="inv-status">평가자 이름과 이메일을 입력 후 초대를 발송하세요.</div>
+    </div>
+
+    <div class="review-header">
+      <div class="review-tag">EVALUATOR REVIEW · D+75</div>
+      <h1>수습 <span>평가</span></h1>
+      <p>아래 항목을 바탕으로 수습 기간 동안의 대상자를 평가해주세요.<br>평가 결과는 인사담당자와 공유됩니다.</p>
+    </div>
+
+    <!-- 평가자 정보 -->
+    <div class="section" style="animation-delay:.05s">
+      <div class="section-title"><div class="section-num" style="background:var(--gray);">✎</div> 평가자 정보</div>
+      <div class="evaluator-field"><label>평가자 이름 *</label><input type="text" id="ev-name" placeholder="홍길동"/></div>
+      <div class="evaluator-field"><label>평가자 직책</label><input type="text" id="ev-role" placeholder="팀장 / 리드 등"/></div>
+    </div>
+
+    <!-- 대상자 -->
+    <div class="target-card" id="target-card">
+      <div class="target-avatar" id="target-avatar">?</div>
+      <div class="target-info">
+        <div class="target-name" id="target-name">-</div>
+        <div class="target-meta" id="target-meta">-</div>
+        <div class="target-self-summary" id="target-self-summary">셀프 리뷰 미제출</div>
+      </div>
+    </div>
+
+    <!-- 1. 7원칙 평가 -->
+    <div class="section" style="animation-delay:.1s">
+      <div class="section-title"><div class="section-num">1</div> 머스트잇 7원칙 평가</div>
+      <div class="section-desc">각 원칙이 대상자의 업무에 얼마나 발현됐는지 평가해주세요. (1~5점)</div>
+      <div id="principles-eval"></div>
+    </div>
+
+    <!-- 2. 업무 역량 평가 -->
+    <div class="section" style="animation-delay:.15s">
+      <div class="section-title"><div class="section-num">2</div> 업무 역량 평가</div>
+      <div class="section-desc">각 항목을 1~5점으로 평가해주세요. (1: 매우 미흡 / 3: 보통 / 5: 매우 우수)</div>
+      <div id="work-eval"></div>
+      <div class="score-summary">
+        <div class="score-summary-title">업무 역량 점수 요약</div>
+        <div class="score-total">합계: <span id="work-total">0</span>점 / 50점</div>
+      </div>
+    </div>
+
+    <!-- 3. 근무 태도 평가 -->
+    <div class="section" style="animation-delay:.2s">
+      <div class="section-title"><div class="section-num">3</div> 근무 태도 평가</div>
+      <div class="section-desc">근무 전반에 대한 태도를 평가해주세요. (1~5점)</div>
+      <div id="attitude-eval"></div>
+      <div class="score-summary">
+        <div class="score-total">합계: <span id="attitude-total">0</span>점 / 15점</div>
+      </div>
+    </div>
+
+    <!-- 4. 종합 코멘트 -->
+    <div class="section" style="animation-delay:.25s">
+      <div class="section-title"><div class="section-num">4</div> 종합 코멘트</div>
+      <div class="section-desc">업무 성과, 조직문화 적응 상태, 보완사항 및 기대사항을 자유롭게 작성해주세요.</div>
+      <div class="field"><label>강점 / 잘한 점</label><textarea id="ev-strength" placeholder="예: 빠른 학습 속도와 적극적인 질문 자세가 인상적이었습니다." rows="3"></textarea></div>
+      <div class="field"><label>개선이 필요한 점</label><textarea id="ev-improve" placeholder="예: 업무 우선순위 설정에 좀 더 신경 쓰면 좋겠습니다." rows="3"></textarea></div>
+      <div class="field"><label>향후 기대사항</label><textarea id="ev-expect" placeholder="예: 점차 자기 주도적으로 프로젝트를 이끌어가길 기대합니다." rows="3"></textarea></div>
+    </div>
+
+    <!-- 5. 최종 결정 -->
+    <div class="section" style="animation-delay:.3s">
+      <div class="section-title"><div class="section-num">5</div> 최종 결정</div>
+      <div class="section-desc">수습 기간 종료 후 처리 방향을 선택해주세요.<br><small style="color:var(--gray);">※ 합계 60점 미만인 경우 부적격을 고려해주세요.</small></div>
+      <div class="final-decision">
+        <button class="decision-btn pass" id="dec-pass" onclick="setDecision('pass')">✅ 수습 통과</button>
+        <button class="decision-btn extend" id="dec-extend" onclick="setDecision('extend')">⏳ 수습 연장</button>
+        <button class="decision-btn fail" id="dec-fail" onclick="setDecision('fail')">❌ 부적격</button>
+      </div>
+      <div class="field" style="margin-top:14px;"><label>결정 사유 (선택)</label><textarea id="ev-decision-reason" placeholder="결정에 대한 추가 사유를 작성해주세요." rows="2"></textarea></div>
+    </div>
+
+    <div class="pdf-btn-wrap">
+      <button class="pdf-btn" onclick="window.print()">📄 PDF로 저장하기</button>
+    </div>
+    <div class="submit-section">
+      <button class="submit-btn" onclick="submitEval()">평가 제출하기</button>
+      <p class="submit-notice">제출 후 수정이 불가합니다. 신중하게 작성해주세요.</p>
+    </div>
+  </div>
+</div>
+
+<script>
+const EMAILJS_SERVICE = 'service_pftd52q';
+const EMAILJS_TEMPLATE = 'd7wvp3v';
+
+function sendInvite() {
+  const invName = document.getElementById('inv-name').value.trim();
+  const invEmail = document.getElementById('inv-email').value.trim();
+  if(!invName || !invEmail) { alert('평가자 이름과 이메일을 입력해주세요!'); return; }
+  if(!targetUser) { alert('대상자 정보가 없어요. 올바른 링크로 접속해주세요.'); return; }
+
+  const reviewLink = window.location.origin + window.location.pathname + '?uid=' + encodeURIComponent(uid);
+  const statusEl = document.getElementById('inv-status');
+  statusEl.textContent = '발송 중...';
+
+  emailjs.send(EMAILJS_SERVICE, EMAILJS_TEMPLATE, {
+    to_email: invEmail,
+    evaluator_name: invName,
+    target_name: targetUser.name,
+    target_dept: targetUser.dept,
+    review_link: reviewLink,
+    name: 'MUST'IT People Team',
+  }).then(() => {
+    statusEl.textContent = '✅ ' + invName + '님(' + invEmail + ')에게 초대 이메일을 발송했습니다!';
+    statusEl.style.color = 'var(--success)';
+    document.getElementById('inv-name').value = '';
+    document.getElementById('inv-email').value = '';
+  }).catch((err) => {
+    statusEl.textContent = '❌ 발송 실패: ' + JSON.stringify(err);
+    statusEl.style.color = 'var(--red)';
+  });
+}
+
+const WEBHOOK_URL = 'https://default5b2597aa61bf4662b414259f1ab1df.98.environment.api.powerplatform.com:443/powerautomate/automations/direct/workflows/9c1bcf05daba448b97808ddb7c4d3666/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=Belok316SBbfQ6xQLkihhkdWrJJvaUiMuuHIsPi10fM';
+
+const PRINCIPLES = ['본질','고객','오너십','소통','그릿','목표','스피드'];
+const PRINCIPLE_DESCS = {
+  '본질':'\"왜 하는가?\"에 대한 물음을 바탕으로 업의 속성을 이해하고 행동합니다.',
+  '고객':'모든 주제는 절대적으로 고객 관점에서 생각하고 토론합니다.',
+  '오너십':'항상 내 일의 주인은 바로 나 자신이라는 생각을 가지고 업무에 임합니다.',
+  '소통':'의도가 명확히 전달될 수 있도록 직접적이되, 성숙한 자세로 빈번하게 소통합니다.',
+  '그릿':'집요하게 문제를 인식하고 치열하게 해결 방안을 찾아 실행합니다.',
+  '목표':'우리의 잠재력이 최대한 발휘되도록 항상 높은 목표를 세우고 도전합니다.',
+  '스피드':'현재 상황에서 가장 효과적인 방안을 찾아 빠르게 실행하고 과정에서 100%를 추구합니다.',
+};
+const WORK_ITEMS = [
+  '담당 업무를 충분히 이해하고 있습니다.',
+  '담당 업무를 충분히 처리합니다.',
+  '직무 관련 지식 및 기술을 알거나 알기 위해 노력합니다.',
+  '업무 지시에 대한 수용 능력이 있습니다.',
+  '담당 업무를 기한을 지켜 처리합니다.',
+  '업무 과정 정보를 적시에 공유하고 정리하는 능력이 있습니다.',
+  '업무 우선순위 선정 및 상황 대처 능력이 있습니다.',
+  '업무에 대해 적극적입니다.',
+  '자신의 의견을 적극적으로 표현합니다.',
+  '직원 간 협조 및 협업 능력이 있습니다.',
+];
+const ATTITUDE_ITEMS = [
+  '정신적·육체적 건강을 유지합니다.',
+  '동료들과 원만한 관계를 유지합니다.',
+  '근무 태도(규율 준수, 성실, 인간관계 등)가 양호합니다.',
+];
+
+const scores = { principles:{}, work:{}, attitude:{} };
+let finalDecision = '';
+
+// URL에서 uid
+const urlParams = new URLSearchParams(window.location.search);
+const uid = urlParams.get('uid');
+const allUsers = JSON.parse(localStorage.getItem('mustit_users')||'{}');
+const targetUser = uid ? allUsers[uid] : null;
+
+if(!targetUser) {
+  document.getElementById('locked-screen').style.display = 'block';
+  document.getElementById('locked-screen').querySelector('h2').textContent = '대상자 정보 없음';
+  document.getElementById('locked-screen').querySelector('p').textContent = '올바른 링크로 접속해주세요.';
+} else {
+  const joinDt = new Date(targetUser.joindate);
+  const today = new Date();
+  const diffDays = Math.floor((today - joinDt)/(1000*60*60*24))+1;
+  document.getElementById('day-badge').textContent = 'D+' + diffDays;
+  document.getElementById('tb-sub').textContent = targetUser.name + '님 평가 · D+' + diffDays;
+
+  // D+75 체크
+  if(diffDays < 75) {
+    document.getElementById('locked-screen').style.display = 'block';
+    const unlockDate = new Date(joinDt.getTime() + 75*24*60*60*1000);
+    document.getElementById('unlock-date').textContent = '오픈 예정일: ' + unlockDate.toLocaleDateString('ko-KR');
+  } else {
+    // 이미 제출
+    const saved = JSON.parse(localStorage.getItem('mustit_eval_review_'+uid)||'null');
+    if(saved && saved.submitted) {
+      document.getElementById('done-screen').style.display = 'block';
+    } else {
+      document.getElementById('review-form').style.display = 'block';
+    }
+  }
+
+  // 대상자 정보
+  document.getElementById('target-avatar').textContent = targetUser.name[0];
+  document.getElementById('target-name').textContent = targetUser.name;
+  document.getElementById('target-meta').textContent = targetUser.dept + ' · 입사 ' + new Date(targetUser.joindate).toLocaleDateString('ko-KR');
+
+  // 셀프 리뷰 요약
+  const sr = targetUser.selfReview;
+  if(sr) {
+    document.getElementById('target-self-summary').innerHTML =
+      `셀프리뷰 제출 완료 · 온보딩 ${sr.onboardingStar}⭐ · 회사 ${sr.companyStar}⭐<br><em style="color:white;">"${sr.selfMsg || '-'}"</em>`;
+  }
+}
+
+// 7원칙 렌더
+const pGrid = document.getElementById('principles-eval');
+PRINCIPLES.forEach(p => {
+  scores.principles[p] = 0;
+  const div = document.createElement('div');
+  div.className = 'principle-eval';
+  div.innerHTML = `
+    <div class="principle-eval-header">
+      <div class="principle-eval-name">${p}</div>
+      <div class="mini-score-btns" id="pev-${p}">
+        ${[1,2,3,4,5].map(i=>`<button class="mini-score-btn" onclick="setScore('principles','${p}',${i})">${i}</button>`).join('')}
+      </div>
+    </div>
+    <div class="principle-eval-desc">${PRINCIPLE_DESCS[p]}</div>`;
+  pGrid.appendChild(div);
+});
+
+// 업무 역량 렌더
+function renderEvalItems(containerId, items, category, totalId) {
+  const container = document.getElementById(containerId);
+  items.forEach((item, idx) => {
+    scores[category][idx] = 0;
+    const div = document.createElement('div');
+    div.className = 'eval-item';
+    div.innerHTML = `
+      <div class="eval-header">
+        <div class="eval-desc">${item}</div>
+        <div class="score-btns" id="${category}-${idx}">
+          ${[1,2,3,4,5].map(i=>`<button class="score-btn" onclick="setScore('${category}',${idx},${i})">${i}</button>`).join('')}
+        </div>
+      </div>
+      <div class="score-label"><span>1 매우 미흡</span><span>3 보통</span><span>5 매우 우수</span></div>`;
+    container.appendChild(div);
+  });
+}
+renderEvalItems('work-eval', WORK_ITEMS, 'work', 'work-total');
+renderEvalItems('attitude-eval', ATTITUDE_ITEMS, 'attitude', 'attitude-total');
+
+function setScore(category, key, val) {
+  scores[category][key] = val;
+  const btns = document.querySelectorAll('#'+(category+'-'+key)+' .score-btn, #pev-'+key+' .mini-score-btn');
+  btns.forEach((b,i) => b.classList.toggle('on', i === val-1));
+  updateTotals();
+}
+function updateTotals() {
+  const workTotal = Object.values(scores.work).reduce((a,b)=>a+Number(b),0);
+  const attTotal = Object.values(scores.attitude).reduce((a,b)=>a+Number(b),0);
+  document.getElementById('work-total').textContent = workTotal;
+  document.getElementById('attitude-total').textContent = attTotal;
+}
+function setDecision(val) {
+  finalDecision = val;
+  ['pass','extend','fail'].forEach(d => document.getElementById('dec-'+d).classList.toggle('on', d===val));
+}
+
+function submitEval() {
+  const evName = document.getElementById('ev-name').value.trim();
+  if(!evName) { alert('평가자 이름을 입력해주세요!'); return; }
+  if(!finalDecision) { alert('최종 결정을 선택해주세요!'); return; }
+
+  const workTotal = Object.values(scores.work).reduce((a,b)=>a+Number(b),0);
+  const attTotal = Object.values(scores.attitude).reduce((a,b)=>a+Number(b),0);
+  const prinTotal = Object.values(scores.principles).reduce((a,b)=>a+Number(b),0);
+
+  const data = {
+    submitted: true,
+    submittedAt: new Date().toISOString(),
+    evaluatorName: evName,
+    evaluatorRole: document.getElementById('ev-role').value,
+    targetUserId: uid,
+    targetName: targetUser?.name,
+    targetDept: targetUser?.dept,
+    scores,
+    workTotal,
+    attTotal,
+    prinTotal,
+    grandTotal: workTotal + attTotal,
+    decision: finalDecision,
+    decisionReason: document.getElementById('ev-decision-reason').value,
+    strength: document.getElementById('ev-strength').value,
+    improve: document.getElementById('ev-improve').value,
+    expect: document.getElementById('ev-expect').value,
+  };
+
+  localStorage.setItem('mustit_eval_review_'+uid, JSON.stringify(data));
+
+  // 전체 유저 데이터 업데이트
+  const allUsers2 = JSON.parse(localStorage.getItem('mustit_users')||'{}');
+  if(allUsers2[uid]) {
+    allUsers2[uid].evalReview = data;
+    allUsers2[uid].evalSubmitted = true;
+    allUsers2[uid].finalDecision = finalDecision;
+    localStorage.setItem('mustit_users', JSON.stringify(allUsers2));
+  }
+
+  const decisionText = {pass:'✅ 수습 통과', extend:'⏳ 수습 연장', fail:'❌ 부적격'}[finalDecision];
+
+  fetch(WEBHOOK_URL, {
+    method:'POST',
+    headers:{'Content-Type':'application/json'},
+    body: JSON.stringify({
+      type:'message',
+      attachments:[{
+        contentType:'application/vnd.microsoft.card.adaptive',
+        content:{
+          type:'AdaptiveCard', version:'1.2',
+          body:[
+            {type:'TextBlock', text:'📊 평가자 리뷰 제출 완료', weight:'Bolder', size:'Medium'},
+            {type:'FactSet', facts:[
+              {title:'대상자', value:(targetUser?.name||'-')+' ('+(targetUser?.dept||'-')+')'},
+              {title:'평가자', value:evName},
+              {title:'업무 점수', value:workTotal+'/50'},
+              {title:'태도 점수', value:attTotal+'/15'},
+              {title:'합계', value:(workTotal+attTotal)+'/65'},
+              {title:'최종 결정', value:decisionText},
+              {title:'제출 시각', value:new Date().toLocaleString('ko-KR')}
+            ]}
+          ]
+        }
+      }]
+    })
+  }).catch(()=>{});
+
+  document.getElementById('review-form').style.display = 'none';
+  document.getElementById('done-screen').style.display = 'block';
+  window.scrollTo(0,0);
+}
+</script>
+</body>
+</html>

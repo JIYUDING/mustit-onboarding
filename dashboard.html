@@ -797,9 +797,11 @@ function loadDashboard() {
             <div class="person-name">${u.name}</div>
             <div class="person-meta">${u.dept} · 입사 ${new Date(u.joindate).toLocaleDateString('ko-KR')} · 최근 업데이트 ${lastUpdate}</div>
             ${u.meeting?`<div class="person-meta" style="margin-top:2px;">📅 ${new Date(u.meeting).toLocaleDateString('ko-KR')} ${new Date(u.meeting).toLocaleTimeString('ko-KR',{hour:'2-digit',minute:'2-digit'})}${u.room?' · '+u.room:''}</div>`:''}
-            <div style="display:flex;align-items:center;gap:8px;margin-top:8px;">
+            <div style="display:flex;align-items:center;gap:8px;margin-top:8px;flex-wrap:wrap;">
               <div class="mission-dots">${dotsHTML}</div>
               ${finProg.pct>0?`<span style="font-size:10px;padding:1px 7px;border-radius:10px;background:var(--finance2);color:var(--finance);font-weight:700;">💰 ${finProg.pct}%</span>`:''}
+              ${u.selfReviewSubmitted?`<span style="font-size:10px;padding:1px 7px;border-radius:10px;background:rgba(245,158,11,0.1);color:#F59E0B;font-weight:700;">📋 셀프리뷰 완료</span>`:`<span style="font-size:10px;padding:1px 7px;border-radius:10px;background:rgba(255,255,255,0.05);color:var(--text2);">📋 셀프리뷰 대기</span>`}
+              ${u.evalSubmitted?`<span style="font-size:10px;padding:1px 7px;border-radius:10px;background:rgba(59,130,246,0.1);color:#3B82F6;font-weight:700;">📊 평가완료 ${u.finalDecision==='pass'?'✅':u.finalDecision==='fail'?'❌':'⏳'}</span>`:''}
             </div>
           </div>
           <div class="person-right">
@@ -818,6 +820,10 @@ function loadDashboard() {
               💰 Finance 체크리스트
               ${finProg.pct<100?`<span style="font-size:10px;margin-left:4px;padding:1px 5px;border-radius:8px;background:var(--finance2);color:var(--finance);">${finProg.done}/${finProg.total}</span>`:`<span style="font-size:10px;margin-left:4px;padding:1px 5px;border-radius:8px;background:var(--green2);color:var(--green);">✓</span>`}
             </button>
+            <button class="panel-tab" id="pbtab_review_${u.userId}" onclick="switchPanelTab('${u.userId}','review')" style="${u.evalSubmitted?'color:var(--green);':''}">
+              📊 리뷰 현황
+              ${u.evalSubmitted?`<span style="font-size:10px;margin-left:4px;padding:1px 5px;border-radius:8px;background:var(--green2);color:var(--green);">✓</span>`:''}
+            </button>
           </div>
 
           <!-- People 탭 컨텐츠 -->
@@ -834,6 +840,46 @@ function loadDashboard() {
           <div class="panel-content hidden" id="ptab_finance_${u.userId}">
             <div class="hr-panel-title">Finance 체크리스트 항목</div>
             ${financeHRHTML}
+          </div>
+
+          <!-- Review 탭 컨텐츠 -->
+          <div class="panel-content hidden" id="ptab_review_${u.userId}">
+            <div class="hr-panel-title">리뷰 현황</div>
+            <div style="display:flex;flex-direction:column;gap:10px;margin-top:8px;">
+              <div style="background:var(--dark4);border-radius:10px;padding:14px;display:flex;align-items:center;justify-content:space-between;">
+                <div>
+                  <div style="font-size:13px;font-weight:700;">📋 셀프 리뷰 (D+70)</div>
+                  <div style="font-size:11px;color:var(--text2);margin-top:3px;">${u.selfReviewSubmitted?'제출 완료 · '+new Date(u.selfReview?.submittedAt).toLocaleDateString('ko-KR'):'아직 미제출'}</div>
+                  ${u.selfReview?`<div style="font-size:12px;color:#F59E0B;margin-top:6px;">"${u.selfReview.selfMsg||'-'}"</div>`:''}
+                </div>
+                <div style="text-align:right;">
+                  ${u.selfReviewSubmitted?`<div style="font-size:18px;">온보딩 ${'⭐'.repeat(u.selfReview?.onboardingStar||0)}</div><div style="font-size:18px;">회사 ${'⭐'.repeat(u.selfReview?.companyStar||0)}</div>`:'<span style="font-size:11px;color:var(--text2);">대기 중</span>'}
+                </div>
+              </div>
+              <div style="background:var(--dark4);border-radius:10px;padding:14px;display:flex;align-items:center;justify-content:space-between;">
+                <div>
+                  <div style="font-size:13px;font-weight:700;">📊 평가자 리뷰 (D+75)</div>
+                  <div style="font-size:11px;color:var(--text2);margin-top:3px;">${u.evalSubmitted?'제출 완료 · 평가자: '+u.evalReview?.evaluatorName:'아직 미제출'}</div>
+                  ${u.evalReview?`<div style="font-size:12px;margin-top:6px;">업무 ${u.evalReview.workTotal}/50 · 태도 ${u.evalReview.attTotal}/15 · 합계 ${u.evalReview.grandTotal}/65</div>`:''}
+                </div>
+                <div style="text-align:right;">
+                  ${u.evalSubmitted?`<div style="font-size:22px;">${u.finalDecision==='pass'?'✅':u.finalDecision==='fail'?'❌':'⏳'}</div><div style="font-size:11px;color:var(--text2);">${u.finalDecision==='pass'?'수습 통과':u.finalDecision==='fail'?'부적격':'수습 연장'}</div>`:'<span style="font-size:11px;color:var(--text2);">대기 중</span>'}
+                </div>
+              </div>
+              <div style="display:flex;gap:8px;flex-wrap:wrap;">
+                <a href="self-review.html?uid=${u.userId}" style="flex:1;min-width:120px;padding:8px;background:rgba(245,158,11,0.1);border:1px solid rgba(245,158,11,0.3);border-radius:8px;color:#F59E0B;font-size:12px;text-align:center;text-decoration:none;">📋 셀프 리뷰 페이지</a>
+                <a href="evaluator-review.html?uid=${u.userId}" style="flex:1;min-width:120px;padding:8px;background:rgba(59,130,246,0.1);border:1px solid rgba(59,130,246,0.3);border-radius:8px;color:#3B82F6;font-size:12px;text-align:center;text-decoration:none;">📊 평가자 리뷰 작성</a>
+              </div>
+              <div style="margin-top:8px;">
+                <div style="font-size:11px;color:var(--text2);margin-bottom:6px;">평가자 초대 이메일 발송</div>
+                <div style="display:flex;gap:6px;">
+                  <input id="inv-name-${u.userId}" placeholder="평가자 이름" style="flex:1;padding:7px 10px;background:var(--dark3);border:1px solid var(--border);border-radius:7px;color:white;font-size:12px;font-family:inherit;outline:none;"/>
+                  <input id="inv-email-${u.userId}" placeholder="이메일" style="flex:2;padding:7px 10px;background:var(--dark3);border:1px solid var(--border);border-radius:7px;color:white;font-size:12px;font-family:inherit;outline:none;"/>
+                  <button onclick="sendInviteFromDash('${u.userId}','${u.name}','${u.dept}')" style="padding:7px 12px;background:#3B82F6;border:none;border-radius:7px;color:white;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;white-space:nowrap;">✉️ 발송</button>
+                </div>
+                <div id="inv-status-${u.userId}" style="font-size:11px;color:var(--text2);margin-top:5px;"></div>
+              </div>
+            </div>
           </div>
         </div>
       </div>`;
@@ -896,6 +942,40 @@ function copyLink(){
 }
 
 // ── 초기화 ──
+// EmailJS 초기화
+(function(){
+  const script = document.createElement('script');
+  script.src = 'https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js';
+  script.onload = () => emailjs.init('uvMbRhv9NNphE8z71dRrJ');
+  document.head.appendChild(script);
+})();
+
+function sendInviteFromDash(userId, targetName, targetDept) {
+  const nameEl = document.getElementById('inv-name-'+userId);
+  const emailEl = document.getElementById('inv-email-'+userId);
+  const statusEl = document.getElementById('inv-status-'+userId);
+  const invName = nameEl.value.trim();
+  const invEmail = emailEl.value.trim();
+  if(!invName || !invEmail) { alert('이름과 이메일을 입력해주세요!'); return; }
+  const reviewLink = window.location.origin + window.location.pathname.replace('dashboard.html','') + 'evaluator-review.html?uid=' + encodeURIComponent(userId);
+  statusEl.textContent = '발송 중...';
+  emailjs.send('service_pftd52q', 'd7wvp3v', {
+    to_email: invEmail,
+    evaluator_name: invName,
+    target_name: targetName,
+    target_dept: targetDept,
+    review_link: reviewLink,
+    name: "MUST'IT People Team",
+  }).then(() => {
+    statusEl.textContent = '✅ ' + invName + '님에게 초대 이메일 발송 완료!';
+    statusEl.style.color = 'var(--green)';
+    nameEl.value = ''; emailEl.value = '';
+  }).catch(err => {
+    statusEl.textContent = '❌ 발송 실패';
+    statusEl.style.color = 'var(--red)';
+  });
+}
+
 loadDashboard();
 setInterval(loadDashboard, 30000);
 </script>

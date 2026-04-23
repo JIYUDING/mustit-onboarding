@@ -1,0 +1,471 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MUST'IT 셀프 리뷰</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{--red:#E8192C;--dark:#14141F;--dark2:#1E1E2E;--dark3:#252535;--gray:#8888A0;--border:rgba(255,255,255,0.08);--success:#22C55E;--amber:#F59E0B;}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Noto Sans KR',sans-serif;background:var(--dark);color:white;min-height:100vh;}
+.topbar{display:flex;align-items:center;gap:12px;padding:14px 28px;border-bottom:1px solid var(--border);background:rgba(20,20,31,0.95);position:sticky;top:0;z-index:100;backdrop-filter:blur(12px);}
+.logo-text{background:var(--red);color:white;font-family:'Bebas Neue',sans-serif;font-size:12px;letter-spacing:1px;padding:4px 9px;border-radius:5px;}
+.topbar-title{font-size:14px;font-weight:700;}
+.topbar-sub{font-size:11px;color:var(--gray);}
+.day-badge{margin-left:auto;font-size:12px;color:var(--amber);font-weight:700;border:1px solid rgba(245,158,11,0.3);padding:3px 10px;border-radius:999px;}
+
+.wrap{max-width:720px;margin:0 auto;padding:40px 24px;}
+
+/* 잠금 화면 */
+.locked-screen{text-align:center;padding:80px 24px;}
+.locked-icon{font-size:64px;margin-bottom:20px;}
+.locked-screen h2{font-size:22px;font-weight:700;margin-bottom:8px;}
+.locked-screen p{font-size:14px;color:var(--gray);line-height:1.7;}
+.unlock-date{display:inline-block;margin-top:16px;font-size:13px;color:var(--amber);border:1px solid rgba(245,158,11,0.3);padding:6px 16px;border-radius:999px;}
+
+/* 헤더 */
+.review-header{margin-bottom:32px;}
+.review-tag{display:inline-block;font-size:11px;letter-spacing:1px;color:var(--amber);border:1px solid rgba(245,158,11,0.3);padding:4px 12px;border-radius:999px;margin-bottom:12px;}
+.review-header h1{font-family:'Bebas Neue',sans-serif;font-size:40px;letter-spacing:1px;margin-bottom:8px;}
+.review-header h1 span{color:var(--red);}
+.review-header p{font-size:13px;color:var(--gray);line-height:1.7;}
+
+/* 섹션 */
+.section{background:var(--dark2);border:1px solid var(--border);border-radius:16px;padding:24px;margin-bottom:16px;}
+.section-title{font-size:14px;font-weight:700;margin-bottom:4px;display:flex;align-items:center;gap:8px;}
+.section-desc{font-size:12px;color:var(--gray);margin-bottom:20px;line-height:1.6;}
+.section-num{width:24px;height:24px;border-radius:6px;background:var(--red);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0;}
+
+/* 별점 */
+.stars{display:flex;gap:8px;margin-bottom:8px;}
+.star{font-size:28px;cursor:pointer;transition:transform .1s;filter:grayscale(1);opacity:0.4;}
+.star.on{filter:none;opacity:1;transform:scale(1.1);}
+.star-label{font-size:12px;color:var(--gray);margin-top:4px;}
+
+/* 슬라이더 */
+.slider-group{margin-bottom:16px;}
+.slider-label{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;}
+.slider-name{font-size:13px;}
+.slider-val{font-size:13px;font-weight:700;color:var(--amber);min-width:20px;text-align:right;}
+.slider-wrap{position:relative;}
+input[type=range]{width:100%;-webkit-appearance:none;height:4px;border-radius:2px;background:var(--dark3);outline:none;}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;height:18px;border-radius:50%;background:var(--amber);cursor:pointer;transition:transform .1s;}
+input[type=range]::-webkit-slider-thumb:hover{transform:scale(1.2);}
+.slider-marks{display:flex;justify-content:space-between;font-size:10px;color:var(--gray);margin-top:4px;}
+
+/* 원칙 평가 */
+.principles-grid{display:flex;flex-direction:column;gap:10px;}
+.principle-item{background:var(--dark3);border-radius:10px;padding:12px 14px;}
+.principle-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;}
+.principle-name{font-size:13px;font-weight:700;}
+.principle-desc{font-size:11px;color:var(--gray);margin-bottom:8px;line-height:1.5;}
+.mini-stars{display:flex;gap:5px;}
+.mini-star{font-size:18px;cursor:pointer;filter:grayscale(1);opacity:0.4;transition:all .1s;}
+.mini-star.on{filter:none;opacity:1;}
+
+/* 텍스트 영역 */
+.field{margin-bottom:16px;}
+.field label{display:block;font-size:12px;color:var(--gray);margin-bottom:6px;}
+.field textarea{width:100%;padding:12px 14px;background:var(--dark3);border:1px solid var(--border);border-radius:10px;color:white;font-size:13px;font-family:'Noto Sans KR',sans-serif;outline:none;resize:vertical;min-height:100px;line-height:1.7;transition:border-color .2s;}
+.field textarea:focus{border-color:rgba(232,25,44,0.4);}
+.field input{width:100%;padding:11px 14px;background:var(--dark3);border:1px solid var(--border);border-radius:10px;color:white;font-size:13px;font-family:'Noto Sans KR',sans-serif;outline:none;transition:border-color .2s;}
+.field input:focus{border-color:rgba(232,25,44,0.4);}
+.char-count{font-size:11px;color:var(--gray);text-align:right;margin-top:4px;}
+
+/* 목표 테이블 */
+.goal-table{width:100%;border-collapse:collapse;margin-bottom:12px;}
+.goal-table th{background:var(--dark3);padding:10px 12px;font-size:12px;color:var(--gray);font-weight:500;text-align:left;border-bottom:1px solid var(--border);}
+.goal-table td{padding:8px 4px;vertical-align:top;}
+.goal-table td input,.goal-table td textarea{width:100%;padding:8px 10px;background:var(--dark3);border:1px solid var(--border);border-radius:8px;color:white;font-size:12px;font-family:'Noto Sans KR',sans-serif;outline:none;resize:none;}
+.add-row-btn{font-size:12px;color:var(--gray);background:transparent;border:1px dashed rgba(255,255,255,0.15);border-radius:8px;padding:8px;width:100%;cursor:pointer;font-family:'Noto Sans KR',sans-serif;margin-top:6px;}
+.add-row-btn:hover{border-color:rgba(255,255,255,0.3);color:white;}
+
+/* 제출 */
+.submit-section{text-align:center;padding:24px 0;}
+.submit-btn{padding:14px 48px;background:var(--red);color:white;border:none;border-radius:12px;font-family:'Noto Sans KR',sans-serif;font-size:15px;font-weight:700;cursor:pointer;transition:all .2s;}
+.submit-btn:hover{background:#c0141f;transform:translateY(-1px);}
+.submit-btn:disabled{background:var(--dark3);color:var(--gray);cursor:not-allowed;transform:none;}
+.pdf-btn-wrap{text-align:center;margin-bottom:16px;}
+.pdf-btn{padding:10px 28px;background:transparent;color:var(--gray);border:1px solid var(--border);border-radius:10px;font-family:"Noto Sans KR",sans-serif;font-size:13px;cursor:pointer;transition:all .2s;}
+.pdf-btn:hover{border-color:rgba(255,255,255,0.3);color:white;}
+.submit-notice{font-size:12px;color:var(--gray);margin-top:10px;}
+
+/* 완료 화면 */
+.done-screen{display:none;text-align:center;padding:60px 24px;}
+.done-screen h2{font-size:22px;font-weight:700;margin-bottom:8px;color:var(--success);}
+.done-screen p{font-size:14px;color:var(--gray);line-height:1.7;}
+
+@keyframes fadeUp{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
+.section{animation:fadeUp .4s ease both;}
+</style>
+<style id="print-style">
+@media print {
+  .topbar, .submit-section, .submit-notice, .add-row-btn, footer, .pdf-btn-wrap { display: none !important; }
+  body { background: white !important; color: black !important; }
+  .wrap { padding: 20px !important; }
+  .section { background: white !important; border: 1px solid #ddd !important; border-radius: 8px !important; margin-bottom: 12px !important; break-inside: avoid; }
+  .section-num { background: #E8192C !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  .star.on { filter: none !important; opacity: 1 !important; }
+  .mini-star.on { filter: none !important; opacity: 1 !important; }
+  .review-header { margin-bottom: 16px; }
+  input, textarea { border: 1px solid #ddd !important; background: #f9f9f9 !important; color: black !important; }
+  .principle-item { background: #f5f5f5 !important; border-radius: 6px !important; }
+  .slider-val { color: #E8192C !important; }
+}
+</style>
+<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+<script>emailjs.init('uvMbRhv9NNphE8z71dRrJ');</script>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="logo-text">MUST'IT</div>
+  <div>
+    <div class="topbar-title">셀프 리뷰</div>
+    <div class="topbar-sub" id="tb-sub">Self Review · D+70</div>
+  </div>
+  <div class="day-badge" id="day-badge">D+?</div>
+</div>
+
+<div class="wrap">
+  <!-- 잠금 화면 -->
+  <div class="locked-screen" id="locked-screen" style="display:none">
+    <div class="locked-icon">🔒</div>
+    <h2>아직 열리지 않았어요</h2>
+    <p>셀프 리뷰는 입사 후 70일이 되면 작성할 수 있어요.<br>조금만 더 기다려주세요!</p>
+    <div class="unlock-date" id="unlock-date">오픈 예정일: -</div>
+  </div>
+
+  <!-- 완료 화면 -->
+  <div class="done-screen" id="done-screen">
+    <div style="font-size:64px;margin-bottom:20px;">✅</div>
+    <h2>셀프 리뷰 제출 완료!</h2>
+    <p>수고하셨어요! 인사담당자에게 알림이 전송됐습니다.<br>평가자 리뷰는 D+75부터 진행될 예정이에요.</p>
+  </div>
+
+  <!-- 리뷰 폼 -->
+  <div id="review-form">
+    <div class="review-header">
+      <div class="review-tag">SELF REVIEW · D+70</div>
+      <h1>지난 <span>70일</span>을<br>돌아봐요</h1>
+      <p>솔직하게 작성할수록 더 좋은 피드백을 받을 수 있어요.<br>본 자료는 수습 종료 검토 자료로 활용됩니다.</p>
+    </div>
+
+    <!-- 1. 온보딩 만족도 -->
+    <div class="section" style="animation-delay:.05s">
+      <div class="section-title"><div class="section-num">1</div> 온보딩 경험 만족도</div>
+      <div class="section-desc">입사 후 온보딩 과정이 얼마나 도움이 됐나요?</div>
+      <div class="stars" id="onboarding-stars">
+        <span class="star" data-v="1" onclick="setStar('onboarding',1)">⭐</span>
+        <span class="star" data-v="2" onclick="setStar('onboarding',2)">⭐</span>
+        <span class="star" data-v="3" onclick="setStar('onboarding',3)">⭐</span>
+        <span class="star" data-v="4" onclick="setStar('onboarding',4)">⭐</span>
+        <span class="star" data-v="5" onclick="setStar('onboarding',5)">⭐</span>
+      </div>
+      <div class="star-label" id="onboarding-label">별점을 선택해주세요</div>
+      <div class="field" style="margin-top:14px;">
+        <label>온보딩에서 가장 도움됐던 점</label>
+        <textarea id="onboarding-good" placeholder="예: Wiki 가이드가 상세해서 혼자서도 충분히 셋업할 수 있었어요" rows="2"></textarea>
+      </div>
+      <div class="field">
+        <label>아쉬웠던 점 또는 개선 제안</label>
+        <textarea id="onboarding-bad" placeholder="예: VPN 설정이 복잡해서 안내가 더 있으면 좋겠어요" rows="2"></textarea>
+      </div>
+    </div>
+
+    <!-- 2. 목표 & 성과 -->
+    <div class="section" style="animation-delay:.1s">
+      <div class="section-title"><div class="section-num">2</div> 목표 & 성과</div>
+      <div class="section-desc">처음 설정했던 목표와 실제 달성 결과를 작성해주세요. 수치로 표현할 수 있다면 더 좋아요.</div>
+      <table class="goal-table">
+        <thead>
+          <tr>
+            <th style="width:30%">목표 (정량/정성)</th>
+            <th style="width:35%">행동 (DO)</th>
+            <th style="width:35%">결과 (BE)</th>
+          </tr>
+        </thead>
+        <tbody id="goal-tbody">
+          <tr>
+            <td><input type="text" placeholder="예: 서비스 이해도 80% 달성"/></td>
+            <td><textarea rows="2" placeholder="예: 매일 서비스 사용 + Wiki 정독"></textarea></td>
+            <td><textarea rows="2" placeholder="예: 주요 플로우 숙지, 개선점 3개 발견"></textarea></td>
+          </tr>
+          <tr>
+            <td><input type="text" placeholder="목표 2"/></td>
+            <td><textarea rows="2" placeholder="행동 2"></textarea></td>
+            <td><textarea rows="2" placeholder="결과 2"></textarea></td>
+          </tr>
+        </tbody>
+      </table>
+      <button class="add-row-btn" onclick="addGoalRow()">+ 목표 추가</button>
+    </div>
+
+    <!-- 3. 자기 역량 진단 -->
+    <div class="section" style="animation-delay:.15s">
+      <div class="section-title"><div class="section-num">3</div> 자기 역량 진단</div>
+      <div class="section-desc">현재 나의 상태를 솔직하게 평가해주세요. (1: 많이 부족 ~ 5: 충분히 잘함)</div>
+      <div class="slider-group">
+        <div class="slider-label"><span class="slider-name">💼 업무 이해도</span><span class="slider-val" id="v-work">3</span></div>
+        <input type="range" min="1" max="5" value="3" step="1" oninput="document.getElementById('v-work').textContent=this.value"/>
+        <div class="slider-marks"><span>1 많이 부족</span><span>3 보통</span><span>5 충분함</span></div>
+      </div>
+      <div class="slider-group">
+        <div class="slider-label"><span class="slider-name">🤝 팀 적응도</span><span class="slider-val" id="v-team">3</span></div>
+        <input type="range" min="1" max="5" value="3" step="1" oninput="document.getElementById('v-team').textContent=this.value"/>
+        <div class="slider-marks"><span>1 많이 부족</span><span>3 보통</span><span>5 충분함</span></div>
+      </div>
+      <div class="slider-group">
+        <div class="slider-label"><span class="slider-name">🛠 툴/시스템 숙련도</span><span class="slider-val" id="v-tool">3</span></div>
+        <input type="range" min="1" max="5" value="3" step="1" oninput="document.getElementById('v-tool').textContent=this.value"/>
+        <div class="slider-marks"><span>1 많이 부족</span><span>3 보통</span><span>5 충분함</span></div>
+      </div>
+      <div class="slider-group">
+        <div class="slider-label"><span class="slider-name">💬 커뮤니케이션</span><span class="slider-val" id="v-comm">3</span></div>
+        <input type="range" min="1" max="5" value="3" step="1" oninput="document.getElementById('v-comm').textContent=this.value"/>
+        <div class="slider-marks"><span>1 많이 부족</span><span>3 보통</span><span>5 충분함</span></div>
+      </div>
+      <div class="slider-group">
+        <div class="slider-label"><span class="slider-name">⚡ 업무 스피드</span><span class="slider-val" id="v-speed">3</span></div>
+        <input type="range" min="1" max="5" value="3" step="1" oninput="document.getElementById('v-speed').textContent=this.value"/>
+        <div class="slider-marks"><span>1 많이 부족</span><span>3 보통</span><span>5 충분함</span></div>
+      </div>
+    </div>
+
+    <!-- 4. 7원칙 자가 평가 -->
+    <div class="section" style="animation-delay:.2s">
+      <div class="section-title"><div class="section-num">4</div> 머스트잇 7원칙 자가 평가</div>
+      <div class="section-desc">지난 70일 동안 각 원칙이 나의 업무에 얼마나 발현됐는지 평가해주세요.</div>
+      <div class="principles-grid" id="principles-grid"></div>
+    </div>
+
+    <!-- 5. 회사/팀 피드백 (역방향) -->
+    <div class="section" style="animation-delay:.25s">
+      <div class="section-title"><div class="section-num">5</div> 회사 & 팀에 대한 피드백</div>
+      <div class="section-desc">입사자의 시각으로 바라본 솔직한 피드백이에요. 회사 발전에 소중하게 활용됩니다.</div>
+      <div class="stars" id="company-stars">
+        <span class="star" data-v="1" onclick="setStar('company',1)">⭐</span>
+        <span class="star" data-v="2" onclick="setStar('company',2)">⭐</span>
+        <span class="star" data-v="3" onclick="setStar('company',3)">⭐</span>
+        <span class="star" data-v="4" onclick="setStar('company',4)">⭐</span>
+        <span class="star" data-v="5" onclick="setStar('company',5)">⭐</span>
+      </div>
+      <div class="star-label" id="company-label">전반적인 만족도를 선택해주세요</div>
+      <div class="field" style="margin-top:14px;">
+        <label>팀/조직문화에서 좋았던 점</label>
+        <textarea id="company-good" placeholder="예: 빠른 피드백 문화가 좋았어요" rows="2"></textarea>
+      </div>
+      <div class="field">
+        <label>개선됐으면 하는 점</label>
+        <textarea id="company-bad" placeholder="예: 온보딩 초기에 업무 가이드가 더 있으면 좋겠어요" rows="2"></textarea>
+      </div>
+    </div>
+
+    <!-- 6. 향후 계획 -->
+    <div class="section" style="animation-delay:.3s">
+      <div class="section-title"><div class="section-num">6</div> 향후 계획 & 다짐</div>
+      <div class="section-desc">앞으로 도전해보고 싶은 업무와 성장 계획을 작성해주세요.</div>
+      <div class="field">
+        <label>도전해보고 싶은 업무/분야</label>
+        <textarea id="future-work" placeholder="예: 데이터 분석 역량을 키워서 마케팅 의사결정에 기여하고 싶어요" rows="3"></textarea>
+      </div>
+      <div class="field">
+        <label>스스로에게 하고 싶은 한마디 (한 줄 소감)</label>
+        <input type="text" id="self-msg" placeholder="예: 두려움보다 설렘이 더 큰 70일이었습니다 🔥" maxlength="100"/>
+        <div class="char-count"><span id="msg-count">0</span>/100</div>
+      </div>
+    </div>
+
+    <div class="pdf-btn-wrap">
+      <button class="pdf-btn" onclick="exportPDF()">📄 PDF로 저장하기</button>
+    </div>
+    <div class="submit-section">
+      <button class="submit-btn" id="submit-btn" onclick="submitReview()">셀프 리뷰 제출하기</button>
+      <p class="submit-notice">제출 후 수정이 불가합니다. 신중하게 작성해주세요.</p>
+    </div>
+  </div>
+</div>
+
+<script>
+function exportPDF() {
+  window.print();
+}
+
+const WEBHOOK_URL = 'https://default5b2597aa61bf4662b414259f1ab1df.98.environment.api.powerplatform.com:443/powerautomate/automations/direct/workflows/9c1bcf05daba448b97808ddb7c4d3666/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=Belok316SBbfQ6xQLkihhkdWrJJvaUiMuuHIsPi10fM';
+
+const PRINCIPLES = [
+  {key:'본질', desc:'\"왜 하는가?\"에 대한 물음을 바탕으로 업의 속성을 이해하고 행동합니다.'},
+  {key:'고객', desc:'모든 주제는 절대적으로 고객 관점에서 생각하고 토론합니다.'},
+  {key:'오너십', desc:'항상 내 일의 주인은 바로 나 자신이라는 생각을 가지고 업무에 임합니다.'},
+  {key:'소통', desc:'의도가 명확히 전달될 수 있도록 직접적이되, 성숙한 자세로 빈번하게 소통합니다.'},
+  {key:'그릿', desc:'집요하게 문제를 인식하고 치열하게 해결 방안을 찾아 실행합니다.'},
+  {key:'목표', desc:'우리의 잠재력이 최대한 발휘되도록 항상 높은 목표를 세우고 도전합니다.'},
+  {key:'스피드', desc:'현재 상황에서 가장 효과적인 방안을 찾아 빠르게 실행하고 과정에서 100%를 추구합니다.'},
+];
+
+const starLabels = ['','많이 부족해요','조금 부족해요','보통이에요','잘 하고 있어요','아주 잘하고 있어요'];
+const starRatings = {onboarding:0, company:0};
+const principleRatings = {};
+
+// 유저 정보 로드
+const currentUser = JSON.parse(localStorage.getItem('mustit_current') || 'null');
+if(!currentUser) { window.location.href = 'index.html'; }
+
+const {name, dept, joindate, userId} = currentUser;
+const joinDt = new Date(joindate);
+const today = new Date();
+const diffDays = Math.floor((today - joinDt) / (1000*60*60*24)) + 1;
+
+document.getElementById('day-badge').textContent = 'D+' + diffDays;
+document.getElementById('tb-sub').textContent = name + '님 · D+' + diffDays;
+
+// D+70 체크
+if(diffDays < 70) {
+  document.getElementById('locked-screen').style.display = 'block';
+  document.getElementById('review-form').style.display = 'none';
+  const unlockDate = new Date(joinDt.getTime() + 70*24*60*60*1000);
+  document.getElementById('unlock-date').textContent = '오픈 예정일: ' + unlockDate.toLocaleDateString('ko-KR');
+}
+
+// 이미 제출했으면 완료 화면
+const saved = JSON.parse(localStorage.getItem('mustit_self_review_'+userId)||'null');
+if(saved && saved.submitted) {
+  document.getElementById('review-form').style.display = 'none';
+  document.getElementById('done-screen').style.display = 'block';
+}
+
+// 별점
+function setStar(type, val) {
+  starRatings[type] = val;
+  const stars = document.querySelectorAll('#'+type+'-stars .star');
+  stars.forEach((s,i) => s.classList.toggle('on', i < val));
+  document.getElementById(type+'-label').textContent = starLabels[val];
+}
+
+// 7원칙 렌더
+const grid = document.getElementById('principles-grid');
+PRINCIPLES.forEach(p => {
+  principleRatings[p.key] = 0;
+  const div = document.createElement('div');
+  div.className = 'principle-item';
+  div.innerHTML = `
+    <div class="principle-header">
+      <div class="principle-name">${p.key}</div>
+    </div>
+    <div class="principle-desc">${p.desc}</div>
+    <div class="mini-stars" id="ps-${p.key}">
+      ${[1,2,3,4,5].map(i=>`<span class="mini-star" onclick="setPrinciple('${p.key}',${i})">⭐</span>`).join('')}
+    </div>
+    <div class="field" style="margin-top:10px;">
+      <textarea id="pe-${p.key}" placeholder="관련 사례나 에피소드를 간단히 적어주세요 (선택)" rows="2"></textarea>
+    </div>`;
+  grid.appendChild(div);
+});
+
+function setPrinciple(key, val) {
+  principleRatings[key] = val;
+  const stars = document.querySelectorAll('#ps-'+key+' .mini-star');
+  stars.forEach((s,i) => s.classList.toggle('on', i < val));
+}
+
+// 목표 행 추가
+function addGoalRow() {
+  const tbody = document.getElementById('goal-tbody');
+  const tr = document.createElement('tr');
+  tr.innerHTML = `
+    <td><input type="text" placeholder="목표"/></td>
+    <td><textarea rows="2" placeholder="행동"></textarea></td>
+    <td><textarea rows="2" placeholder="결과"></textarea></td>`;
+  tbody.appendChild(tr);
+}
+
+// 한줄 소감 글자수
+document.getElementById('self-msg').addEventListener('input', function(){
+  document.getElementById('msg-count').textContent = this.value.length;
+});
+
+// 제출
+function submitReview() {
+  if(!starRatings.onboarding) { alert('온보딩 만족도 별점을 선택해주세요!'); return; }
+  if(!starRatings.company) { alert('회사 만족도 별점을 선택해주세요!'); return; }
+
+  // 목표 데이터 수집
+  const goals = [];
+  document.querySelectorAll('#goal-tbody tr').forEach(tr => {
+    const inputs = tr.querySelectorAll('input, textarea');
+    if(inputs[0].value.trim()) {
+      goals.push({ goal: inputs[0].value, action: inputs[1].value, result: inputs[2].value });
+    }
+  });
+
+  const data = {
+    userId, name, dept, joindate,
+    submittedAt: new Date().toISOString(),
+    submitted: true,
+    onboardingStar: starRatings.onboarding,
+    onboardingGood: document.getElementById('onboarding-good').value,
+    onboardingBad: document.getElementById('onboarding-bad').value,
+    goals,
+    selfScores: {
+      work: document.querySelector('input[oninput*="v-work"]').value,
+      team: document.querySelector('input[oninput*="v-team"]').value,
+      tool: document.querySelector('input[oninput*="v-tool"]').value,
+      comm: document.querySelector('input[oninput*="v-comm"]').value,
+      speed: document.querySelector('input[oninput*="v-speed"]').value,
+    },
+    principles: Object.fromEntries(PRINCIPLES.map(p => [p.key, {
+      score: principleRatings[p.key],
+      example: document.getElementById('pe-'+p.key).value
+    }])),
+    companyStar: starRatings.company,
+    companyGood: document.getElementById('company-good').value,
+    companyBad: document.getElementById('company-bad').value,
+    futureWork: document.getElementById('future-work').value,
+    selfMsg: document.getElementById('self-msg').value,
+  };
+
+  // 저장
+  localStorage.setItem('mustit_self_review_'+userId, JSON.stringify(data));
+
+  // 전체 유저 데이터에도 반영
+  const allUsers = JSON.parse(localStorage.getItem('mustit_users')||'{}');
+  if(allUsers[userId]) {
+    allUsers[userId].selfReview = data;
+    allUsers[userId].selfReviewSubmitted = true;
+    localStorage.setItem('mustit_users', JSON.stringify(allUsers));
+  }
+
+  // Teams 알림
+  fetch(WEBHOOK_URL, {
+    method:'POST',
+    headers:{'Content-Type':'application/json'},
+    body: JSON.stringify({
+      type:'message',
+      attachments:[{
+        contentType:'application/vnd.microsoft.card.adaptive',
+        content:{
+          type:'AdaptiveCard', version:'1.2',
+          body:[
+            {type:'TextBlock', text:'📋 셀프 리뷰 제출 완료', weight:'Bolder', size:'Medium'},
+            {type:'FactSet', facts:[
+              {title:'이름', value: name + ' (' + dept + ')'},
+              {title:'D+', value: diffDays + '일'},
+              {title:'온보딩 만족도', value: '⭐'.repeat(starRatings.onboarding)},
+              {title:'회사 만족도', value: '⭐'.repeat(starRatings.company)},
+              {title:'한줄 소감', value: data.selfMsg || '-'},
+              {title:'제출 시각', value: new Date().toLocaleString('ko-KR')}
+            ]}
+          ]
+        }
+      }]
+    })
+  }).catch(()=>{});
+
+  document.getElementById('review-form').style.display = 'none';
+  document.getElementById('done-screen').style.display = 'block';
+  window.scrollTo(0,0);
+}
+</script>
+</body>
+</html>
