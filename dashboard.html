@@ -648,6 +648,36 @@ function switchPanelTab(userId, tabName) {
   if(tabName === 'finance') updateFinanceProgress(userId);
 }
 
+// ── D+75 자동 평가자 초대 ──
+function checkAutoInvite() {
+  const allUsers = JSON.parse(localStorage.getItem('mustit_users')||'{}');
+  const lastCheck = localStorage.getItem('mustit_last_invite_check')||'';
+  const today = new Date().toDateString();
+  if(lastCheck === today) return; // 오늘 이미 체크함
+  
+  Object.values(allUsers).forEach(u => {
+    if(!u.joindate || !u.evaluatorEmail) return;
+    const diffDays = Math.floor((new Date() - new Date(u.joindate))/(1000*60*60*24))+1;
+    if(diffDays === 75 && !u.autoInviteSent) {
+      // D+75 되면 자동 발송
+      const reviewLink = 'https://mustit-onboarding.vercel.app/evaluator-review.html?uid=' + encodeURIComponent(u.userId) + '&name=' + encodeURIComponent(u.name) + '&dept=' + encodeURIComponent(u.dept) + '&joindate=' + encodeURIComponent(u.joindate) + '&preview=1';
+      emailjs.send('service_pftd52q', 'template_eqcjv0o', {
+        to_email: u.evaluatorEmail,
+        evaluator_name: u.evaluatorName||'평가자',
+        target_name: u.name,
+        target_dept: u.dept,
+        review_link: reviewLink,
+        name: "MUST'IT People Team",
+      }).then(() => {
+        allUsers[u.userId].autoInviteSent = true;
+        localStorage.setItem('mustit_users', JSON.stringify(allUsers));
+        console.log('자동 초대 발송 완료:', u.name);
+      }).catch(err => console.log('자동 초대 발송 실패:', err));
+    }
+  });
+  localStorage.setItem('mustit_last_invite_check', today);
+}
+
 // ── 메인 탭 전환 ──
 function switchMainTab(tab, el) {
   document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
@@ -966,8 +996,9 @@ function sendInviteFromDash(userId, targetName, targetDept) {
   const invName = nameEl.value.trim();
   const invEmail = emailEl.value.trim();
   if(!invName || !invEmail) { alert('이름과 이메일을 입력해주세요!'); return; }
-  const targetUser2 = (JSON.parse(localStorage.getItem('mustit_users')||'{}')||{})[userId]||{};
-  const reviewLink = window.location.origin + window.location.pathname.replace('dashboard.html','') + 'evaluator-review.html?uid=' + encodeURIComponent(userId) + '&name=' + encodeURIComponent(targetUser2.name||'') + '&dept=' + encodeURIComponent(targetUser2.dept||'') + '&joindate=' + encodeURIComponent(targetUser2.joindate||'') + '&preview=1';
+  const allUsersData = JSON.parse(localStorage.getItem('mustit_users')||'{}');
+  const targetUserData = allUsersData[userId]||{};
+  const reviewLink = 'https://mustit-onboarding.vercel.app/evaluator-review.html?uid=' + encodeURIComponent(userId) + '&name=' + encodeURIComponent(targetName) + '&dept=' + encodeURIComponent(targetDept) + '&joindate=' + encodeURIComponent(targetUserData.joindate||'') + '&preview=1';
   statusEl.textContent = '발송 중...';
   emailjs.send('service_pftd52q', 'template_eqcjv0o', {
     to_email: invEmail,
@@ -989,6 +1020,8 @@ function sendInviteFromDash(userId, targetName, targetDept) {
 
 loadDashboard();
 setInterval(loadDashboard, 30000);
+// D+75 자동 이메일 발송 체크 (하루 1회)
+checkAutoInvite();
 </script>
 </body>
 </html>
