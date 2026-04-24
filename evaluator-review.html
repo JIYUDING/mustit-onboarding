@@ -318,7 +318,17 @@ let finalDecision = '';
 const urlParams = new URLSearchParams(window.location.search);
 const uid = urlParams.get('uid');
 const allUsers = JSON.parse(localStorage.getItem('mustit_users')||'{}');
-const targetUser = uid ? allUsers[uid] : null;
+let targetUser = uid ? allUsers[uid] : null;
+
+// localStorage에 없으면 URL 파라미터에서 복원
+if(!targetUser && uid) {
+  const pName = urlParams.get('name');
+  const pDept = urlParams.get('dept');
+  const pJoin = urlParams.get('joindate');
+  if(pName) {
+    targetUser = { userId: uid, name: pName, dept: pDept||'', joindate: pJoin||new Date().toISOString() };
+  }
+}
 
 if(!targetUser) {
   document.getElementById('locked-screen').style.display = 'block';
