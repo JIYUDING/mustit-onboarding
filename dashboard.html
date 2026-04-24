@@ -464,6 +464,13 @@
       <button class="btn-primary" onclick="copyLink()" style="width:100%;">📋 링크 복사해서 입사자에게 전달</button>
     </div>
 
+    <div class="form-group" style="margin-top:8px;padding-top:12px;border-top:1px solid var(--border2);">
+      <label class="form-label" style="color:#3B82F6;">📧 평가자 정보 (D+75 자동 초대)</label>
+      <div style="display:flex;gap:8px;">
+        <input id="m-ev-name" class="form-input" placeholder="평가자 이름" style="flex:1;"/>
+        <input id="m-ev-email" class="form-input" placeholder="평가자 이메일" style="flex:2;"/>
+      </div>
+    </div>
     <div class="modal-footer">
       <button class="btn-ghost" onclick="closeModal()">취소</button>
       <button class="btn-primary" onclick="registerUser()">등록하기</button>
@@ -950,7 +957,9 @@ function registerUser(){
   if(!name||!dept||!joindate){ alert('이름, 부서, 입사일을 입력해주세요!'); return; }
 
   const userId = name+'_'+joindate;
-  const userData = {name,dept,joindate,userId,meeting,room,startedAt:new Date().toISOString(),pct:0};
+  const evName = document.getElementById('m-ev-name')?.value.trim()||'';
+  const evEmail = document.getElementById('m-ev-email')?.value.trim()||'';
+  const userData = {name,dept,joindate,userId,meeting,room,evaluatorName:evName,evaluatorEmail:evEmail,startedAt:new Date().toISOString(),pct:0};
   const allUsers = JSON.parse(localStorage.getItem('mustit_users')||'{}');
   allUsers[userId] = userData;
   localStorage.setItem('mustit_users', JSON.stringify(allUsers));
