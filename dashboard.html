@@ -968,7 +968,7 @@ function sendInviteFromDash(userId, targetName, targetDept) {
   if(!invName || !invEmail) { alert('이름과 이메일을 입력해주세요!'); return; }
   const reviewLink = window.location.origin + window.location.pathname.replace('dashboard.html','') + 'evaluator-review.html?uid=' + encodeURIComponent(userId);
   statusEl.textContent = '발송 중...';
-  emailjs.send('service_pftd52q', '49tearc', {
+  emailjs.send('service_pftd52q', 'template_eqcjv0o', {
     to_email: invEmail,
     evaluator_name: invName,
     target_name: targetName,
