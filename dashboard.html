@@ -283,6 +283,30 @@
     font-size: 13px; font-family: inherit; outline: none; transition: border-color .15s;
   }
   .form-input:focus, .form-select:focus { border-color: rgba(255,255,255,.25); }
+  .form-input[type=date], .form-input[type=datetime-local] {
+    color-scheme: dark;
+    color: white !important;
+  }
+  .form-input[type=date]::-webkit-calendar-picker-indicator,
+  .form-input[type=datetime-local]::-webkit-calendar-picker-indicator {
+    filter: invert(1);
+    cursor: pointer;
+    width: 16px;
+    height: 16px;
+    opacity: 1;
+  }
+  .form-input[type=date]::-webkit-datetime-edit,
+  .form-input[type=datetime-local]::-webkit-datetime-edit { color: white; }
+  .form-input[type=date]::-webkit-datetime-edit-year-field,
+  .form-input[type=date]::-webkit-datetime-edit-month-field,
+  .form-input[type=date]::-webkit-datetime-edit-day-field,
+  .form-input[type=datetime-local]::-webkit-datetime-edit-year-field,
+  .form-input[type=datetime-local]::-webkit-datetime-edit-month-field,
+  .form-input[type=datetime-local]::-webkit-datetime-edit-day-field,
+  .form-input[type=datetime-local]::-webkit-datetime-edit-hour-field,
+  .form-input[type=datetime-local]::-webkit-datetime-edit-minute-field { color: white !important; }
+  .form-input[type=date]::-webkit-datetime-edit-text,
+  .form-input[type=datetime-local]::-webkit-datetime-edit-text { color: rgba(255,255,255,0.5); }
   .form-select option { background: var(--dark3); }
   .modal-footer { display: flex; gap: 8px; justify-content: flex-end; margin-top: 20px; }
   .link-result {
