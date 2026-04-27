@@ -665,8 +665,23 @@ function checkAutoInvite() {
   Object.values(allUsers).forEach(u => {
     if(!u.joindate || !u.evaluatorEmail) return;
     const diffDays = Math.floor((new Date() - new Date(u.joindate))/(1000*60*60*24))+1;
-    if(diffDays === 75 && !u.autoInviteSent) {
-      // D+75 되면 자동 발송
+    // D+70 셀프 리뷰 자동 발송
+    if(diffDays === 70 && !u.selfReviewMailSent && u.personalInfo?.email) {
+      const selfLink = 'https://mustit-onboarding.vercel.app/self-review.html?uid=' + encodeURIComponent(u.userId);
+      emailjs.send('service_pftd52q', 'template_5o0pu7j', {
+        to_email: u.personalInfo.email,
+        target_name: u.name,
+        review_link: selfLink,
+        name: "MUST'IT People Team",
+      }).then(() => {
+        allUsers[u.userId].selfReviewMailSent = true;
+        localStorage.setItem('mustit_users', JSON.stringify(allUsers));
+        console.log('셀프 리뷰 메일 발송 완료:', u.name);
+      }).catch(err => console.log('셀프 리뷰 메일 발송 실패:', err));
+    }
+
+    // D+75 평가자 자동 발송
+    if(diffDays === 75 && !u.autoInviteSent && u.evaluatorEmail) {
       const reviewLink = 'https://mustit-onboarding.vercel.app/evaluator-review.html?uid=' + encodeURIComponent(u.userId) + '&name=' + encodeURIComponent(u.name) + '&dept=' + encodeURIComponent(u.dept) + '&joindate=' + encodeURIComponent(u.joindate) + '&preview=1';
       emailjs.send('service_pftd52q', 'template_eqcjv0o', {
         to_email: u.evaluatorEmail,
@@ -678,8 +693,8 @@ function checkAutoInvite() {
       }).then(() => {
         allUsers[u.userId].autoInviteSent = true;
         localStorage.setItem('mustit_users', JSON.stringify(allUsers));
-        console.log('자동 초대 발송 완료:', u.name);
-      }).catch(err => console.log('자동 초대 발송 실패:', err));
+        console.log('평가자 초대 발송 완료:', u.name);
+      }).catch(err => console.log('평가자 초대 발송 실패:', err));
     }
   });
   localStorage.setItem('mustit_last_invite_check', today);
