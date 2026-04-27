@@ -269,7 +269,7 @@ function sendInvite() {
     target_name: targetUser.name,
     target_dept: targetUser.dept,
     review_link: reviewLink,
-    name: 'MUST'IT People Team',
+    name: "MUST'IT People Team",
   }).then(() => {
     statusEl.textContent = '✅ ' + invName + '님(' + invEmail + ')에게 초대 이메일을 발송했습니다!';
     statusEl.style.color = 'var(--success)';
