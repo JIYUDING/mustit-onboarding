@@ -195,6 +195,10 @@ body{font-family:'Noto Sans KR',sans-serif;background:var(--dark);color:white;mi
       <div class="section-title"><div class="section-num">1</div> 머스트잇 7원칙 평가</div>
       <div class="section-desc">각 원칙이 대상자의 업무에 얼마나 발현됐는지 평가해주세요. (1~5점)</div>
       <div id="principles-eval"></div>
+      <div class="score-summary">
+        <div class="score-summary-title">7원칙 점수 요약</div>
+        <div class="score-total">합계: <span id="prin-total">0</span>점 / 35점</div>
+      </div>
     </div>
 
     <!-- 2. 업무 역량 평가 -->
@@ -230,7 +234,7 @@ body{font-family:'Noto Sans KR',sans-serif;background:var(--dark);color:white;mi
     <!-- 5. 최종 결정 -->
     <div class="section" style="animation-delay:.3s">
       <div class="section-title"><div class="section-num">5</div> 최종 결정</div>
-      <div class="section-desc">수습 기간 종료 후 처리 방향을 선택해주세요.<br><small style="color:var(--gray);">※ 합계 60점 미만인 경우 부적격을 고려해주세요.</small></div>
+      <div class="section-desc">수습 기간 종료 후 처리 방향을 선택해주세요.<br><small style="color:var(--gray);">※ 7원칙(35점) + 업무역량(50점) + 근무태도(15점) = 총 100점 기준 | 70점 미만 시 부적격 고려</small></div>
       <div class="final-decision">
         <button class="decision-btn pass" id="dec-pass" onclick="setDecision('pass')">✅ 수습 통과</button>
         <button class="decision-btn extend" id="dec-extend" onclick="setDecision('extend')">⏳ 수습 연장</button>
@@ -410,15 +414,22 @@ renderEvalItems('attitude-eval', ATTITUDE_ITEMS, 'attitude', 'attitude-total');
 
 function setScore(category, key, val) {
   scores[category][key] = val;
-  const btns = document.querySelectorAll('#'+(category+'-'+key)+' .score-btn, #pev-'+key+' .mini-score-btn');
-  btns.forEach((b,i) => b.classList.toggle('on', i === val-1));
+  if(category === 'principles') {
+    const btns = document.querySelectorAll('#pev-'+key+' .mini-score-btn');
+    btns.forEach((b,i) => b.classList.toggle('on', i === val-1));
+  } else {
+    const btns = document.querySelectorAll('#'+(category+'-'+key)+' .score-btn');
+    btns.forEach((b,i) => b.classList.toggle('on', i === val-1));
+  }
   updateTotals();
 }
 function updateTotals() {
   const workTotal = Object.values(scores.work).reduce((a,b)=>a+Number(b),0);
   const attTotal = Object.values(scores.attitude).reduce((a,b)=>a+Number(b),0);
+  const prinTotal = Object.values(scores.principles).reduce((a,b)=>a+Number(b),0);
   document.getElementById('work-total').textContent = workTotal;
   document.getElementById('attitude-total').textContent = attTotal;
+  document.getElementById('prin-total').textContent = prinTotal;
 }
 function setDecision(val) {
   finalDecision = val;
@@ -446,7 +457,7 @@ function submitEval() {
     workTotal,
     attTotal,
     prinTotal,
-    grandTotal: workTotal + attTotal,
+    grandTotal: workTotal + attTotal + prinTotal,
     decision: finalDecision,
     decisionReason: document.getElementById('ev-decision-reason').value,
     strength: document.getElementById('ev-strength').value,
@@ -481,12 +492,9 @@ function submitEval() {
             {type:'FactSet', facts:[
               {title:'대상자', value:(targetUser?.name||'-')+' ('+(targetUser?.dept||'-')+')'},
               {title:'평가자', value:evName},
-              {title:'업무 점수', value:workTotal+'/50'},
-              {title:'태도 점수', value:attTotal+'/15'},
-              {title:'합계', value:(workTotal+attTotal)+'/65'},
-              {title:'최종 결정', value:decisionText},
               {title:'제출 시각', value:new Date().toLocaleString('ko-KR')}
-            ]}
+            ]},
+            {type:'TextBlock', text:'📋 자세한 내용은 인사담당자 대시보드에서 확인하세요.', wrap:true, color:'Accent', size:'Small'}
           ]
         }
       }]

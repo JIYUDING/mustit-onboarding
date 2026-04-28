@@ -452,11 +452,9 @@ function submitReview() {
             {type:'FactSet', facts:[
               {title:'이름', value: name + ' (' + dept + ')'},
               {title:'D+', value: diffDays + '일'},
-              {title:'온보딩 만족도', value: '⭐'.repeat(starRatings.onboarding)},
-              {title:'회사 만족도', value: '⭐'.repeat(starRatings.company)},
-              {title:'한줄 소감', value: data.selfMsg || '-'},
               {title:'제출 시각', value: new Date().toLocaleString('ko-KR')}
-            ]}
+            ]},
+            {type:'TextBlock', text:'📋 자세한 내용은 인사담당자 대시보드에서 확인하세요.', wrap:true, color:'Accent', size:'Small'}
           ]
         }
       }]
