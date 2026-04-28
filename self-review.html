@@ -328,7 +328,24 @@ const starRatings = {onboarding:0, company:0};
 const principleRatings = {};
 
 // 유저 정보 로드
-const currentUser = JSON.parse(localStorage.getItem('mustit_current') || 'null');
+const _urlParams = new URLSearchParams(window.location.search);
+const _previewUid = _urlParams.get('uid');
+const _isPreviewMode = _urlParams.get('preview') === '1';
+
+let currentUser = JSON.parse(localStorage.getItem('mustit_current') || 'null');
+
+// 대시보드에서 preview=1 + uid로 접속한 경우 — localStorage 없어도 허용
+if(!currentUser && _isPreviewMode && _previewUid) {
+  const allUsers = JSON.parse(localStorage.getItem('mustit_users') || '{}');
+  const foundUser = allUsers[_previewUid];
+  if(foundUser) {
+    currentUser = foundUser;
+  } else {
+    // uid만 있고 유저 정보 없으면 더미로라도 진행
+    currentUser = { userId: _previewUid, name: '미리보기', dept: '-', joindate: new Date(Date.now() - 75*24*60*60*1000).toISOString() };
+  }
+}
+
 if(!currentUser) { window.location.href = 'index.html'; }
 
 const {name, dept, joindate, userId} = currentUser;
