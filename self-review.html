@@ -142,6 +142,15 @@ input[type=range]::-webkit-slider-thumb:hover{transform:scale(1.2);}
     <div style="font-size:64px;margin-bottom:20px;">✅</div>
     <h2>셀프 리뷰 제출 완료!</h2>
     <p>수고하셨어요! 인사담당자에게 알림이 전송됐습니다.<br>평가자 리뷰는 D+75부터 진행될 예정이에요.</p>
+    <div style="margin-top:24px;display:flex;flex-direction:column;gap:10px;max-width:420px;margin-left:auto;margin-right:auto;">
+      <button onclick="copySelfResultLink()" style="padding:12px 24px;background:var(--red);color:white;border:none;border-radius:10px;font-family:'Noto Sans KR',sans-serif;font-size:13px;font-weight:700;cursor:pointer;">
+        🔗 인사담당자용 결과 링크 복사
+      </button>
+      <button onclick="window.print()" style="padding:12px 24px;background:transparent;color:var(--gray);border:1px solid var(--border);border-radius:10px;font-family:'Noto Sans KR',sans-serif;font-size:13px;cursor:pointer;">
+        📄 PDF로 저장하기
+      </button>
+    </div>
+    <p style="font-size:11px;color:var(--gray);margin-top:12px;">링크를 인사담당자에게 전달하면 제출된 내용을 조회하고 PDF를 추출할 수 있어요.</p>
   </div>
 
   <!-- 리뷰 폼 -->
@@ -288,6 +297,16 @@ input[type=range]::-webkit-slider-thumb:hover{transform:scale(1.2);}
 </div>
 
 <script>
+function copySelfResultLink() {
+  const saved = JSON.parse(localStorage.getItem('mustit_self_review_'+(currentUser?.userId))||'null');
+  if(!saved) { alert('저장된 데이터가 없어요.'); return; }
+  const encoded = btoa(encodeURIComponent(JSON.stringify(saved)));
+  const link = window.location.origin + window.location.pathname + '?view=1&uid=' + encodeURIComponent(currentUser?.userId) + '&data=' + encoded;
+  navigator.clipboard.writeText(link).then(() => {
+    alert('✅ 결과 링크가 복사됐어요!\n인사담당자에게 전달해주세요.');
+  });
+}
+
 function exportPDF() {
   window.print();
 }

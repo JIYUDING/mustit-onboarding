@@ -153,6 +153,15 @@ body{font-family:'Noto Sans KR',sans-serif;background:var(--dark);color:white;mi
     <div style="font-size:64px;margin-bottom:20px;">✅</div>
     <h2>평가자 리뷰 제출 완료!</h2>
     <p>제출이 완료됐습니다. 인사담당자에게 알림이 전송됐어요.</p>
+    <div style="margin-top:24px;display:flex;flex-direction:column;gap:10px;max-width:420px;margin-left:auto;margin-right:auto;">
+      <button onclick="copyResultLink()" style="padding:12px 24px;background:var(--blue);color:white;border:none;border-radius:10px;font-family:'Noto Sans KR',sans-serif;font-size:13px;font-weight:700;cursor:pointer;">
+        🔗 인사담당자용 결과 링크 복사
+      </button>
+      <button onclick="window.print()" style="padding:12px 24px;background:transparent;color:var(--gray);border:1px solid var(--border);border-radius:10px;font-family:'Noto Sans KR',sans-serif;font-size:13px;cursor:pointer;">
+        📄 PDF로 저장하기
+      </button>
+    </div>
+    <p style="font-size:11px;color:var(--gray);margin-top:12px;">링크를 인사담당자에게 전달하면 제출된 평가 내용을 조회하고 PDF를 추출할 수 있어요.</p>
   </div>
 
   <div id="review-form" style="display:none">
@@ -321,6 +330,25 @@ let finalDecision = '';
 // URL에서 uid
 const urlParams = new URLSearchParams(window.location.search);
 const uid = urlParams.get('uid');
+const isViewMode = urlParams.get('view') === '1';
+const viewData = urlParams.get('data');
+
+// 인사담당자 결과 조회 모드
+if(isViewMode && viewData) {
+  try {
+    const parsed = JSON.parse(decodeURIComponent(atob(viewData)));
+    // localStorage에도 저장해서 페이지가 정상 작동하도록
+    if(uid) {
+      const allU = JSON.parse(localStorage.getItem('mustit_users')||'{}');
+      if(allU[uid]) {
+        allU[uid].evalReview = parsed;
+        allU[uid].evalSubmitted = true;
+        localStorage.setItem('mustit_users', JSON.stringify(allU));
+      }
+      localStorage.setItem('mustit_eval_review_'+uid, JSON.stringify(parsed));
+    }
+  } catch(e) { console.log('view data parse error', e); }
+}
 const allUsers = JSON.parse(localStorage.getItem('mustit_users')||'{}');
 let targetUser = uid ? allUsers[uid] : null;
 
@@ -372,6 +400,81 @@ if(!targetUser) {
     document.getElementById('target-self-summary').innerHTML =
       `셀프리뷰 제출 완료 · 온보딩 ${sr.onboardingStar}⭐ · 회사 ${sr.companyStar}⭐<br><em style="color:white;">"${sr.selfMsg || '-'}"</em>`;
   }
+}
+
+// 저장된 데이터로 폼 채우기 (PDF 추출용)
+function loadSavedData(data) {
+  if(!data) return;
+
+  // 폼을 숨긴 채 데이터만 채워서 print 시 보이게 함
+  const form = document.getElementById('review-form');
+  form.style.display = 'block';
+  form.style.position = 'fixed';
+  form.style.left = '-9999px';
+  form.style.visibility = 'hidden';
+
+  setTimeout(() => {
+    // 평가자 정보
+    const evNameEl = document.getElementById('ev-name');
+    const evRoleEl = document.getElementById('ev-role');
+    if(evNameEl) evNameEl.value = data.evaluatorName || '';
+    if(evRoleEl) evRoleEl.value = data.evaluatorRole || '';
+
+    // 7원칙 점수
+    if(data.scores?.principles) {
+      Object.entries(data.scores.principles).forEach(([key, val]) => {
+        if(val) {
+          const btns = document.querySelectorAll('#pev-'+key+' .mini-score-btn');
+          btns.forEach((b,i) => b.classList.toggle('on', i === val-1));
+        }
+      });
+    }
+    // 업무 역량
+    if(data.scores?.work) {
+      Object.entries(data.scores.work).forEach(([idx, val]) => {
+        if(val) {
+          const btns = document.querySelectorAll('#work-'+idx+' .score-btn');
+          btns.forEach((b,i) => b.classList.toggle('on', i === val-1));
+        }
+      });
+    }
+    // 근무 태도
+    if(data.scores?.attitude) {
+      Object.entries(data.scores.attitude).forEach(([idx, val]) => {
+        if(val) {
+          const btns = document.querySelectorAll('#attitude-'+idx+' .score-btn');
+          btns.forEach((b,i) => b.classList.toggle('on', i === val-1));
+        }
+      });
+    }
+    // 합계
+    document.getElementById('work-total').textContent = data.workTotal || 0;
+    document.getElementById('attitude-total').textContent = data.attTotal || 0;
+    document.getElementById('prin-total').textContent = data.prinTotal || 0;
+    // 코멘트
+    const str = document.getElementById('ev-strength');
+    const imp = document.getElementById('ev-improve');
+    const exp = document.getElementById('ev-expect');
+    const dr  = document.getElementById('ev-decision-reason');
+    if(str) str.value = data.strength || '';
+    if(imp) imp.value = data.improve || '';
+    if(exp) exp.value = data.expect || '';
+    if(dr)  dr.value  = data.decisionReason || '';
+    // 최종 결정
+    if(data.decision) setDecision(data.decision);
+    // PDF 버튼 클릭 시 폼 보이게
+    document.querySelectorAll('.done-screen button').forEach(btn => {
+      if(btn.textContent.includes('PDF')) {
+        btn.onclick = () => {
+          form.style.position = '';
+          form.style.left = '';
+          form.style.visibility = '';
+          window.print();
+        };
+      }
+    });
+    updateTotals();
+  }, 300);
 }
 
 // 7원칙 렌더
@@ -504,6 +607,31 @@ function submitEval() {
   document.getElementById('review-form').style.display = 'none';
   document.getElementById('done-screen').style.display = 'block';
   window.scrollTo(0,0);
+
+  // 결과 링크 자동 생성
+  generateResultLink(uid, data);
+}
+
+function generateResultLink(userId, data) {
+  // 제출 데이터를 base64로 인코딩해서 URL에 담기
+  const encoded = btoa(encodeURIComponent(JSON.stringify(data)));
+  const link = window.location.origin + window.location.pathname + '?view=1&uid=' + encodeURIComponent(userId) + '&data=' + encoded;
+  window._resultLink = link;
+}
+
+function copyResultLink() {
+  if(window._resultLink) {
+    navigator.clipboard.writeText(window._resultLink).then(() => {
+      alert('✅ 결과 링크가 복사됐어요!\n인사담당자에게 전달해주세요.');
+    });
+  } else {
+    // 이미 제출된 경우 localStorage에서 복원
+    const saved = JSON.parse(localStorage.getItem('mustit_eval_review_'+uid)||'null');
+    if(saved) {
+      generateResultLink(uid, saved);
+      copyResultLink();
+    }
+  }
 }
 </script>
 </body>
