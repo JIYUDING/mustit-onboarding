@@ -602,7 +602,7 @@ function saveNote(userId, key) {
 // ── IT 알림 ──
 function notifyIT(userId) {
   const btn = document.getElementById('notify_'+userId);
-  if(btn && btn.classList.contains('sent')) return;
+  // 중복 발송 허용 (재발송 가능)
   const emailEl = document.getElementById('note_'+userId+'_email');
   const email = emailEl ? emailEl.value : '';
   const allUsers = JSON.parse(localStorage.getItem('mustit_users')||'{}');
@@ -625,7 +625,10 @@ function notifyIT(userId) {
       }
     }]})
   }).catch(()=>{});
-  if(btn){ btn.classList.add('sent'); btn.textContent='✓ 전송 완료'; }
+  if(btn){ 
+    btn.textContent='✓ 전송 완료';
+    setTimeout(()=>{ btn.textContent='📨 개발팀 요청 (재발송)'; }, 3000);
+  }
   const state = getHRState(userId);
   state['it_account'] = true; state['notify_sent'] = true;
   saveHRState(userId, state);
@@ -826,7 +829,7 @@ function loadDashboard() {
           <div class="hr-label">${item.label}</div>
           ${item.inputKey ? `<input class="hr-input" id="note_${u.userId}_${item.inputKey}" placeholder="${item.inputPlaceholder}" value="${hr[item.inputKey+'_val']||''}" oninput="saveNote('${u.userId}','${item.inputKey}')"/>` : ''}
         </div>
-        ${item.hasNotify ? `<button class="notify-btn ${hr['notify_sent']?'sent':''}" id="notify_${u.userId}" onclick="notifyIT('${u.userId}')">${hr['notify_sent']?'✓ 전송 완료':'📨 개발팀 요청'}</button>` : ''}
+        ${item.hasNotify ? `<button class="notify-btn" id="notify_${u.userId}" onclick="notifyIT('${u.userId}')">${hr['notify_sent']?'📨 개발팀 요청 (재발송)':'📨 개발팀 요청'}</button>` : ''}
       </div>`).join('');
 
     // Finance HR HTML
