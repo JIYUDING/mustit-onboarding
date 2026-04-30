@@ -595,7 +595,14 @@ function saveNote(userId, key) {
   const el = document.getElementById('note_'+userId+'_'+key);
   if(!el) return;
   const state = getHRState(userId);
-  state[key+'_val'] = el.value;
+  // 이메일 필드면 이메일 주소만 추출
+  let val = el.value;
+  if(key === 'email') {
+    const m = val.match(/[a-zA-Z0-9._%+\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,}/);
+    val = m ? m[0] : val.trim();
+    el.value = val; // input 값도 정리
+  }
+  state[key+'_val'] = val;
   saveHRState(userId, state);
 }
 
@@ -604,7 +611,10 @@ function notifyIT(userId) {
   const btn = document.getElementById('notify_'+userId);
   // 중복 발송 허용 (재발송 가능)
   const emailEl = document.getElementById('note_'+userId+'_email');
-  const email = emailEl ? emailEl.value : '';
+  // 이메일 주소만 추출 (안내문구 등 제거)
+  const rawEmail = emailEl ? emailEl.value : '';
+  const emailMatch = rawEmail.match(/[a-zA-Z0-9._%+\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,}/);
+  const email = emailMatch ? emailMatch[0] : rawEmail.trim();
   const allUsers = JSON.parse(localStorage.getItem('mustit_users')||'{}');
   const u = allUsers[userId];
   if(!u) return;
