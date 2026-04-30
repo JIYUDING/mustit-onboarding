@@ -607,11 +607,8 @@ function saveNote(userId, key) {
 }
 
 // ── IT 알림 ──
-function notifyIT(userId) {
-  const btn = document.getElementById('notify_'+userId);
-  // 중복 발송 허용 (재발송 가능)
+function notifyIT(userId){
   const emailEl = document.getElementById('note_'+userId+'_email');
-  // 이메일 주소만 추출 (안내문구 등 제거)
   const rawEmail = emailEl ? emailEl.value : '';
   const emailMatch = rawEmail.match(/[a-zA-Z0-9._%+\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,}/);
   const email = emailMatch ? emailMatch[0] : rawEmail.trim();
@@ -619,34 +616,41 @@ function notifyIT(userId) {
   const u = allUsers[userId];
   if(!u) return;
   fetch(WEBHOOK_URL,{
-    method:'POST', headers:{'Content-Type':'application/json'},
-    body:JSON.stringify({ type:'message', attachments:[{
-      contentType:'application/vnd.microsoft.card.adaptive', content:{
-        type:'AdaptiveCard',version:'1.2', body:[
-          {type:'TextBlock',text:'🔐 사내 계정 생성 요청',weight:'Bolder',size:'Medium'},
-          {type:'TextBlock',text:'<at>강성훈</at> <at>심지영</at> 계정 생성 요청드립니다.',wrap:true},
-          {type:'FactSet',facts:[
-            {title:'입사자',value:u.name+' ('+u.dept+')'},
-            {title:'입사일',value:u.joindate ? u.joindate.replace(/-/g,'.') : '-'},
-            {title:'생성할 이메일',value:email||'미입력'},
-            {title:'요청 시각',value:(()=>{const d=new Date();return d.getFullYear()+'.'+(d.getMonth()+1).toString().padStart(2,'0')+'.'+d.getDate().toString().padStart(2,'0')+' '+d.getHours().toString().padStart(2,'0')+':'+d.getMinutes().toString().padStart(2,'0')})()}
-          ]}
-        ]
-      }
-    }]})
+    method:'POST',
+    headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({
+      type:'message',
+      attachments:[{
+        contentType:'application/vnd.microsoft.card.adaptive',
+        content:{
+          type:'AdaptiveCard',version:'1.2',
+          body:[
+            {type:'TextBlock',text:'🔐 사내 계정 생성 요청',weight:'Bolder',size:'Medium'},
+            {type:'TextBlock',text:'@shkang@mustit.co.kr @jyshim@mustit.co.kr 계정 생성 요청드립니다.',wrap:true},
+            {type:'FactSet',facts:[
+              {title:'입사자',value:u.name+' ('+u.dept+')'},
+              {title:'입사일',value:u.joindate ? u.joindate.replace(/-/g,'.') : '-'},
+              {title:'생성할 이메일',value:email||'미입력'},
+              {title:'요청 시각',value:new Date().toLocaleString('ko-KR')}
+            ]}
+          ]
+        }
+      }]
+    })
   }).catch(()=>{});
-  if(btn){ 
+  const btn = document.getElementById('notify_'+userId);
+  if(btn){
     btn.textContent='✓ 전송 완료';
     setTimeout(()=>{ btn.textContent='📨 개발팀 요청 (재발송)'; }, 3000);
   }
   const state = getHRState(userId);
-  state['it_account'] = true; state['notify_sent'] = true;
+  state['it_account'] = true;
+  state['notify_sent'] = true;
   saveHRState(userId, state);
   const cb = document.getElementById('hr_'+userId+'_it_account');
   if(cb){ cb.classList.add('on'); cb.textContent='✓'; }
 }
 
-// ── 패널 토글 ──
 function togglePanel(userId) {
   const panel = document.getElementById('panel_'+userId);
   const icon = document.getElementById('icon_'+userId);
