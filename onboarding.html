@@ -137,7 +137,22 @@ footer { text-align: center; padding: 24px; font-size: 11px; color: rgba(255,255
     <p class="sub">인사팀 및 재무팀에서 처리에 필요한 정보입니다.<br>입력하신 정보는 안전하게 관리됩니다.</p>
     <div class="info-grid">
       <div class="info-field"><label>이름 *</label><input type="text" id="info-name" placeholder="홍길동" readonly/></div>
-      <div class="info-field"><label>부서 *</label><input type="text" id="info-dept" placeholder="People" readonly/></div>
+      <div class="info-field"><label>부서 *</label>
+      <select id="info-dept" style="width:100%;padding:11px 14px;background:var(--dark3);border:1px solid var(--border);border-radius:9px;color:white;font-size:13px;font-family:'Noto Sans KR',sans-serif;outline:none;">
+        <option value="">부서 선택</option>
+        <option>Back-end</option>
+        <option>Front-end</option>
+        <option>Product Management</option>
+        <option>Customer eXperience</option>
+        <option>Growth Planning</option>
+        <option>Growth Marketing</option>
+        <option>Design</option>
+        <option>Online MD</option>
+        <option>AD</option>
+        <option>Finance</option>
+        <option>People</option>
+        <option>Market Expansion</option>
+      </select></div>
     </div>
     <div class="info-field"><label>전화번호 *</label><input type="tel" id="info-phone" placeholder="010-0000-0000"/></div>
     <div class="info-field"><label>개인 이메일 *</label><input type="email" id="info-email" placeholder="example@gmail.com"/></div>
@@ -386,7 +401,8 @@ document.getElementById('hero-sub').textContent = name + '님, 함께해서 반�
 if (!currentUser.personalInfo) {
   document.getElementById('info-overlay').style.display = 'flex';
   document.getElementById('info-name').value = name;
-  document.getElementById('info-dept').value = dept;
+  const deptEl = document.getElementById('info-dept');
+  if(deptEl && dept) deptEl.value = dept;
 }
 
 // 대표님 미팅 일정 표시

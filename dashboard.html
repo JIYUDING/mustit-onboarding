@@ -631,7 +631,7 @@ function notifyIT(userId){
               {title:'입사자',value:u.name+' ('+u.dept+')'},
               {title:'입사일',value:u.joindate ? u.joindate.replace(/-/g,'.') : '-'},
               {title:'생성할 이메일',value:email||'미입력'},
-              {title:'요청 시각',value:new Date().toLocaleString('ko-KR')}
+              {title:'요청 시각',value:(function(){var d=new Date();return d.getFullYear()+'년 '+(d.getMonth()+1)+'월 '+d.getDate()+'일 '+d.getHours().toString().padStart(2,'0')+':'+d.getMinutes().toString().padStart(2,'0');}())}
             ]}
           ]
         }
@@ -728,7 +728,8 @@ function switchMainTab(tab, el) {
 
 // ── 복사 ──
 function copyUserLink(userId){
-  const link = 'https://mustit-onboarding.vercel.app/onboarding.html?uid='+encodeURIComponent(userId);
+  const uData = (JSON.parse(localStorage.getItem('mustit_users')||'{}')||{})[userId]||{};
+  const link = 'https://mustit-onboarding.vercel.app/onboarding.html?uid='+encodeURIComponent(userId)+'&dept='+encodeURIComponent(uData.dept||'')+'&joindate='+encodeURIComponent(uData.joindate||'');
   navigator.clipboard.writeText(link).then(()=>alert('링크 복사됐어요! 입사자에게 전달해주세요 😊'));
 }
 
@@ -1013,7 +1014,8 @@ function registerUser(){
     a.click();
   }
 
-  const link = 'https://mustit-onboarding.vercel.app/onboarding.html?uid='+encodeURIComponent(userId);
+  const uData = (JSON.parse(localStorage.getItem('mustit_users')||'{}')||{})[userId]||{};
+  const link = 'https://mustit-onboarding.vercel.app/onboarding.html?uid='+encodeURIComponent(userId)+'&dept='+encodeURIComponent(uData.dept||'')+'&joindate='+encodeURIComponent(uData.joindate||'');
   document.getElementById('link-text').textContent = link;
   document.getElementById('link-result').style.display = 'block';
   loadDashboard();
