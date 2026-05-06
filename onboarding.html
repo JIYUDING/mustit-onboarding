@@ -343,7 +343,26 @@ const uidFromUrl = urlParams.get('uid');
 if (uidFromUrl) {
   const allUsers = JSON.parse(localStorage.getItem('mustit_users') || '{}');
   if (allUsers[uidFromUrl]) {
+    // 같은 브라우저 (인사담당자 등록한 기기)
     localStorage.setItem('mustit_current', JSON.stringify(allUsers[uidFromUrl]));
+  } else {
+    // 다른 브라우저 (신규 입사자 본인 기기) — uid에서 이름/입사일 파싱
+    // uid 형식: 이지혜_2026-05-06 (날짜는 YYYY-MM-DD)
+    const dateMatch = uidFromUrl.match(/(\d{4}-\d{2}-\d{2})$/);
+    const joindate = dateMatch ? dateMatch[1] : '';
+    const name = dateMatch ? uidFromUrl.replace('_'+dateMatch[1], '') : uidFromUrl;
+    const userData = {
+      userId: uidFromUrl,
+      name: decodeURIComponent(name),
+      dept: urlParams.get('dept') || '',
+      joindate: joindate,
+      meeting: urlParams.get('meeting') || '',
+      room: urlParams.get('room') || ''
+    };
+    localStorage.setItem('mustit_current', JSON.stringify(userData));
+    // 입사자 users에도 저장
+    allUsers[uidFromUrl] = userData;
+    localStorage.setItem('mustit_users', JSON.stringify(allUsers));
   }
 }
 
